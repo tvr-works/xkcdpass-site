@@ -101,7 +101,6 @@ code {
 .brand {
   display: flex;
   align-items: baseline;
-  gap: 1.25rem;
   text-decoration: none;
   color: var(--text-light);
 }
@@ -119,12 +118,6 @@ code {
   font-size: clamp(1.65rem, 2vw, 2.25rem);
   font-weight: 800;
   letter-spacing: -0.05em;
-}
-
-.brand-tag {
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-  font-size: 0.95rem;
 }
 
 .site-nav {
@@ -180,7 +173,7 @@ code {
 }
 
 .hero-grid {
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
   align-items: center;
 }
 
@@ -290,45 +283,24 @@ code {
   color: var(--text-dark);
 }
 
-.hero-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1.75rem;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
-}
-
-.hero-meta span {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.hero-meta span::before {
-  content: "";
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 999px;
-  background: var(--accent);
-}
-
 .comic-card {
   position: relative;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .hero-asset-frame {
   margin: 0;
   padding: 0;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  overflow: visible;
 }
 
 .hero-asset {
-  width: 100%;
+  display: block;
+  width: min(100%, 26rem);
   height: auto;
-  background: rgba(255, 255, 255, 0.04);
+  margin-left: auto;
+  background: transparent;
 }
 
 .section {
@@ -526,14 +498,30 @@ code {
 
 .install-card {
   padding: 1.6rem;
-  max-width: 42rem;
+  max-width: 46rem;
+}
+
+.install-card h2 + p {
+  margin-top: 0;
+  font-size: 1.2rem;
+  line-height: 1.8;
+}
+
+.install-card a {
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.14em;
+}
+
+.footer-license-link {
+  color: inherit;
+  font-family: inherit;
 }
 
 .command-card {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
   padding: 0.75rem;
   border-radius: var(--radius-md);
   background: var(--surface-terminal);
@@ -654,12 +642,16 @@ code {
 }
 
 @media (max-width: 980px) {
-  .hero-grid,
   .guide-grid,
   .passkey-grid,
   .install-grid,
   .feature-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.7fr) minmax(220px, 0.9fr);
+    gap: 1.5rem;
   }
 
   .feature-grid {
@@ -683,10 +675,6 @@ code {
   .brand {
     gap: 0.75rem;
     flex-wrap: wrap;
-  }
-
-  .brand-tag {
-    font-size: 0.85rem;
   }
 
   .nav-toggle {
@@ -717,6 +705,19 @@ code {
 
   .hero {
     padding-top: 3rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comic-card {
+    justify-content: center;
+  }
+
+  .hero-asset {
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .hero h1 {

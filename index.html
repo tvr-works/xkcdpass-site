@@ -55,7 +55,6 @@
       <div class="shell header-shell">
         <a class="brand" href="#top" aria-label="xkcdpass home">
           <span class="brand-mark">xkcdpass</span>
-          <span class="brand-tag">strong passwords humans can work with</span>
         </a>
 
         <button
@@ -71,9 +70,10 @@
         </button>
 
         <nav class="site-nav" id="site-nav" aria-label="Primary">
-          <a href="https://github.com/tvanreenen/xkcdpass">GitHub</a>
-          <a href="#guide">Guide</a>
+          <a href="#install">Install</a>
+          <a href="#guide">Examples</a>
           <a href="#faq">FAQ</a>
+          <a href="https://github.com/tvanreenen/xkcdpass">GitHub</a>
         </nav>
       </div>
     </header>
@@ -82,10 +82,10 @@
       <section class="hero">
         <div class="shell hero-grid">
           <div class="hero-copy reveal">
-            <p class="eyebrow">A tiny CLI inspired by a very good comic.</p>
+            <p class="eyebrow">A tiny CLI inspired by a classic comic.</p>
             <h1>
-              Strong passwords
-              <span>humans can work with.</span>
+              Simple passwords,
+              <span>hard to crack.</span>
             </h1>
             <p class="hero-body">
               <code>xkcdpass</code> turns the lesson from
@@ -100,17 +100,11 @@
                 View on GitHub
               </a>
             </div>
-
-            <div class="hero-meta" aria-label="Project quick facts">
-              <span>Open source</span>
-              <span>Go CLI</span>
-              <span>MIT licensed</span>
-            </div>
           </div>
 
           <aside class="comic-card reveal" aria-labelledby="comic-title">
             <figure class="hero-asset-frame">
-              <img class="hero-asset" src="./assets/hero.png" alt='Hand-drawn comic reading "Simple to use, hard to crack."' id="comic-title">
+              <img class="hero-asset" src="./assets/hero-stickman.svg" alt="Hand-drawn stick figure illustration." id="comic-title">
             </figure>
           </aside>
         </div>
@@ -171,10 +165,10 @@
         <div class="shell guide-grid">
           <div class="guide-copy reveal">
             <p class="kicker">See it in action</p>
-            <h2>For the awkward human moments.</h2>
+            <h2>Simple to generate. Easy to use.</h2>
             <p>
-              Think Wi-Fi passwords, account handoffs, temporary shared access, or any situation
-              where a person has to read and type the password correctly.
+              Useful for Wi-Fi passwords, account handoffs, temporary access, and any other moment
+              when someone has to read, type, compare, or say the password correctly.
             </p>
           </div>
 
@@ -201,7 +195,7 @@
             <p class="kicker">Passwordless is here</p>
             <h2>
               And that is good news.
-              <span>But passwords are still with us.</span>
+              <span>But passwords aren't gone yet.</span>
             </h2>
             <p>
               Passkeys avoid a lot of what makes passwords painful, and adoption is accelerating.
@@ -218,14 +212,15 @@
         </div>
       </section>
 
-      <section class="section section-light install-section">
+      <section class="section section-light install-section" id="install">
         <div class="shell install-grid">
           <div class="install-card reveal">
-            <p class="kicker">Install in seconds</p>
-            <h2>One command. That's it.</h2>
+            <h2>Install</h2>
             <p>
-              Homebrew is available for macOS Apple Silicon and Linux x86_64. Everything else can
-              just build from source.
+              Homebrew builds are available via the tap for macOS Apple Silicon and Linux x86_64.
+              For anything else, grab the source on
+              <a href="https://github.com/tvanreenen/xkcdpass">GitHub</a>
+              and build for whatever architecture you want.
             </p>
 
             <div class="command-card">
@@ -382,7 +377,11 @@
     <footer class="site-footer">
       <div class="shell footer-shell">
         <p>xkcdpass is not affiliated with xkcd.</p>
-        <p>MIT License.</p>
+        <p>
+          <a class="footer-license-link" href="https://github.com/tvanreenen/xkcdpass/blob/main/LICENSE">
+            MIT License.
+          </a>
+        </p>
         <a href="#top">Back to top</a>
       </div>
     </footer>
