@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>xkcdpass | passphrase generator for humans | Go CLI</title>
+    <meta
+      name="description"
+      content="xkcdpass is a small Go CLI passphrase generator inspired by xkcd #936. It uses the EFF large wordlist and crypto-secure randomness to generate strong passphrases humans can read, type, compare, and relay."
+    >
+    <link rel="canonical" href="https://xkcdpass.tvr.works/">
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="xkcdpass">
+    <meta property="og:url" content="https://xkcdpass.tvr.works/">
+    <meta property="og:title" content="xkcdpass | passphrase generator for humans | Go CLI">
+    <meta
+      property="og:description"
+      content="A small Go CLI passphrase generator inspired by xkcd #936, using the EFF large wordlist and crypto-secure randomness."
+    >
+    <meta property="og:image" content="https://xkcdpass.tvr.works/assets/hero.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="xkcdpass | passphrase generator for humans | Go CLI">
+    <meta
+      name="twitter:description"
+      content="A small Go CLI passphrase generator inspired by xkcd #936, using the EFF large wordlist and crypto-secure randomness."
+    >
+    <meta name="twitter:image" content="https://xkcdpass.tvr.works/assets/hero.png">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "xkcdpass",
+        "applicationCategory": "SecurityApplication",
+        "operatingSystem": "macOS, Linux",
+        "description": "A small Go CLI passphrase generator inspired by xkcd #936, using the EFF large wordlist and crypto-secure randomness.",
+        "url": "https://xkcdpass.tvr.works/",
+        "downloadUrl": "https://github.com/tvanreenen/xkcdpass",
+        "codeRepository": "https://github.com/tvanreenen/xkcdpass",
+        "sameAs": "https://github.com/tvanreenen/xkcdpass",
+        "license": "https://opensource.org/license/mit",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="top">
+      <div class="shell header-shell">
+        <a class="brand" href="#top" aria-label="xkcdpass home">
+          <span class="brand-mark">xkcdpass</span>
+          <span class="brand-tag">strong passwords humans can work with</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          aria-label="Toggle navigation"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="site-nav" id="site-nav" aria-label="Primary">
+          <a href="https://github.com/tvanreenen/xkcdpass">GitHub</a>
+          <a href="#guide">Guide</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="shell hero-grid">
+          <div class="hero-copy reveal">
+            <p class="eyebrow">A tiny CLI inspired by a very good comic.</p>
+            <h1>
+              Strong passwords
+              <span>humans can work with.</span>
+            </h1>
+            <p class="hero-body">
+              <code>xkcdpass</code> turns the lesson from
+              <a href="https://xkcd.com/936/">xkcd #936</a> into a real tool:
+              long passphrases that are easier to read, type, compare, and say out loud without
+              giving up real security.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="#guide">Get Started</a>
+              <a class="button button-secondary" href="https://github.com/tvanreenen/xkcdpass">
+                View on GitHub
+              </a>
+            </div>
+
+            <div class="hero-meta" aria-label="Project quick facts">
+              <span>Open source</span>
+              <span>Go CLI</span>
+              <span>MIT licensed</span>
+            </div>
+          </div>
+
+          <aside class="comic-card reveal" aria-labelledby="comic-title">
+            <figure class="hero-asset-frame">
+              <img class="hero-asset" src="./assets/hero.png" alt='Hand-drawn comic reading "Simple to use, hard to crack."' id="comic-title">
+            </figure>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section section-light" id="why">
+        <div class="shell">
+          <div class="section-heading reveal">
+            <p class="kicker">Why xkcdpass?</p>
+            <h2>Mostly a joke. Also genuinely useful.</h2>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card reveal">
+              <div class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <use href="./assets/icons/lucide-sprite.svg#brain-circuit"></use>
+                </svg>
+              </div>
+              <h3>Easy to Handle</h3>
+              <p>Better for typing, checking, and reading back without the usual password drama.</p>
+            </article>
+
+            <article class="feature-card reveal">
+              <div class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <use href="./assets/icons/lucide-sprite.svg#shield-check"></use>
+                </svg>
+              </div>
+              <h3>Real Entropy</h3>
+              <p>Long random word sequences do real security better than decorative complexity.</p>
+            </article>
+
+            <article class="feature-card reveal">
+              <div class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <use href="./assets/icons/lucide-sprite.svg#terminal-square"></use>
+                </svg>
+              </div>
+              <h3>Simple CLI</h3>
+              <p>One command, a few flags, and output you can actually use.</p>
+            </article>
+
+            <article class="feature-card reveal">
+              <div class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <use href="./assets/icons/lucide-sprite.svg#lock-keyhole"></use>
+                </svg>
+              </div>
+              <h3>Independent</h3>
+              <p>A standalone option when your password manager's built-in generator is not the shape you want.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-light guide-section" id="guide">
+        <div class="shell guide-grid">
+          <div class="guide-copy reveal">
+            <p class="kicker">See it in action</p>
+            <h2>For the awkward human moments.</h2>
+            <p>
+              Think Wi-Fi passwords, account handoffs, temporary shared access, or any situation
+              where a person has to read and type the password correctly.
+            </p>
+          </div>
+
+          <div class="terminal-card reveal" aria-label="CLI examples">
+            <div class="terminal-body">
+              <p><span class="prompt">$</span> xkcdpass</p>
+              <p class="terminal-output">kitchenrocketpebblelantern</p>
+              <p><span class="prompt">$</span> xkcdpass --words 6 --separator -</p>
+              <p class="terminal-output">gravity-machine-north-elephant-salad-television</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-tint passkey-band">
+        <div class="shell passkey-grid reveal">
+          <div class="passkey-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <use href="./assets/icons/lucide-sprite.svg#fingerprint"></use>
+            </svg>
+          </div>
+
+          <div class="passkey-copy">
+            <p class="kicker">Passwordless is here</p>
+            <h2>
+              And that is good news.
+              <span>But passwords are still with us.</span>
+            </h2>
+            <p>
+              Passkeys avoid a lot of what makes passwords painful, and adoption is accelerating.
+              But until every awkward corner catches up, people still get stuck reading, typing,
+              and handing off passwords.
+            </p>
+          </div>
+
+          <ul class="check-list" aria-label="Benefits">
+            <li>Better for reading back and comparing</li>
+            <li>Easier to type without mistakes</li>
+            <li>Useful for handoffs, temporary access, and Wi-Fi</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section section-light install-section">
+        <div class="shell install-grid">
+          <div class="install-card reveal">
+            <p class="kicker">Install in seconds</p>
+            <h2>One command. That's it.</h2>
+            <p>
+              Homebrew is available for macOS Apple Silicon and Linux x86_64. Everything else can
+              just build from source.
+            </p>
+
+            <div class="command-card">
+              <div class="command-line" id="install-command">brew tap tvanreenen/tap && brew install xkcdpass</div>
+              <button
+                class="copy-button"
+                type="button"
+                data-copy-target="install-command"
+                aria-label="Copy install command"
+                title="Copy install command"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="./assets/icons/lucide-sprite.svg#copy"></use>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-light faq-section" id="faq">
+        <div class="shell">
+          <div class="section-heading reveal">
+            <p class="kicker">FAQ</p>
+            <h2>Some additional context.</h2>
+          </div>
+
+          <div class="faq-list">
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-1"
+              >
+                Why use passphrases instead of random symbols?
+              </button>
+              <div class="faq-answer" id="faq-answer-1" hidden>
+                <p>
+                  Mostly because humans are bad at symbol soup. Passphrases are easier to read,
+                  type, compare, and communicate while still leaving a large search space. It is
+                  the same human-factors idea behind
+                  <a href="https://what3words.com/">what3words</a>: you can identify any 3 metre
+                  square on Earth with three random words like
+                  <code>///purely.casual.text</code> or
+                  <code>///enjoys.perfected.translation</code>, which is far easier for humans to
+                  relay correctly than raw GPS coordinates. Systems like digits. Humans like
+                  words.
+                </p>
+              </div>
+            </article>
+
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-2"
+              >
+                Why not just use the generator in my password manager?
+              </button>
+              <div class="faq-answer" id="faq-answer-2" hidden>
+                <p>
+                  You could, and that is probably the smoothest experience overall. But in the
+                  cases where you specifically want a passphrase a human can read, type, compare,
+                  or relay, a tool like this is a low-friction way to generate something usable
+                  without giving up real security.
+                </p>
+              </div>
+            </article>
+
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-3"
+              >
+                Is the word list secret?
+              </button>
+              <div class="faq-answer" id="faq-answer-3" hidden>
+                <p>
+                  No, and it does not have to be. We use the long wordlist from
+                  <a href="https://www.eff.org/dice">EFF</a> because it is public, well-known, and
+                  curated to be more typable and memorable for humans. Security comes from random
+                  selection over a large public list, not from hiding the list itself.
+                </p>
+              </div>
+            </article>
+
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-4"
+              >
+                What does entropy mean here?
+              </button>
+              <div class="faq-answer" id="faq-answer-4" hidden>
+                <p>
+                  Entropy is just a way to describe how large the guess space is. Bigger space
+                  means more guesses an attacker has to try. With <code>xkcdpass</code>, each word
+                  is chosen uniformly from 7,776 possibilities, so every extra word multiplies the
+                  number of possible passphrases by 7,776. That works out to about 12.9 bits of
+                  entropy per word. In concrete terms: 1 word gives 7,776 possibilities, 2 gives
+                  60,466,176, 3 gives 470,184,984,576, and it keeps compounding from there.
+                </p>
+              </div>
+            </article>
+
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-5"
+              >
+                How many words should I use?
+              </button>
+              <div class="faq-answer" id="faq-answer-5" hidden>
+                <p>
+                  Four words is about 51.7 bits. Six words is about 77.6 bits. In the same
+                  ballpark, that is roughly like 8 or 12 fully random characters drawn from the
+                  whole upper/lowercase, digit, and punctuation soup. Four words is fine for
+                  casual use. Six is the better default if a human is going to keep typing
+                  passwords for a while.
+                </p>
+              </div>
+            </article>
+
+            <article class="faq-item reveal">
+              <button
+                class="faq-question"
+                type="button"
+                aria-expanded="false"
+                aria-controls="faq-answer-6"
+              >
+                Does <code>xkcdpass</code> send passwords anywhere?
+              </button>
+              <div class="faq-answer" id="faq-answer-6" hidden>
+                <p>
+                  No. It runs locally, uses your system CSPRNG through Go's
+                  <code>crypto/rand</code>, and does not call any service. The passphrase only
+                  leaves your machine if you copy or paste it somewhere.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-shell">
+        <p>xkcdpass is not affiliated with xkcd.</p>
+        <p>MIT License.</p>
+        <a href="#top">Back to top</a>
+      </div>
+    </footer>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
