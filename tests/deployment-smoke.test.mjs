@@ -12,10 +12,20 @@ let manifest;
 let headers;
 before(async () => {
   // Build the actual artifact; response fixtures use its bytes and generated CSP.
+  // CI container ownership must not require Git when the platform supplies identity.
+  const env = {
+    ...process.env,
+    PATH: '',
+    GITHUB_SHA: 'a'.repeat(40),
+    GITHUB_HEAD_REF: '',
+    GITHUB_REF_NAME: 'feature/artifact-contract',
+  };
+  delete env.CF_PAGES_COMMIT_SHA;
+  delete env.CF_PAGES_BRANCH;
   execFileSync(process.execPath, ['scripts/build-site.mjs'], {
     cwd: root,
     stdio: 'pipe',
-    env: { ...process.env, CF_PAGES_BRANCH: 'feature/artifact-contract' },
+    env,
   });
   files = Object.fromEntries(
     await Promise.all(
@@ -24,6 +34,7 @@ before(async () => {
   );
   manifest = JSON.parse(files['deployment.json']);
   assert.equal(manifest.branch, 'feature/artifact-contract');
+  assert.equal(manifest.sha, 'a'.repeat(40));
   headers = Object.fromEntries(
     [
       ...files['_headers']

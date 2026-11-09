@@ -8,6 +8,7 @@ import { root, sourceFiles, validateSource, validateOutput, repository } from '.
 await validateSource();
 const sha =
   process.env.CF_PAGES_COMMIT_SHA ??
+  process.env.GITHUB_SHA ??
   execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
 assert.match(sha, /^[a-f0-9]{40}$/u);
 const branch =
