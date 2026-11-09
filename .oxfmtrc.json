@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "package-lock.json",
+    "index.html",
+    "styles.css",
+    "main.js",
+    "assets/**",
+    "robots.txt",
+    "sitemap.xml",
+    "404.html"
+  ]
+}

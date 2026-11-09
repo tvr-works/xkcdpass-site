@@ -1,0 +1,31 @@
+{
+  "name": "xkcdpass-site",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@11.20.0",
+  "engines": {
+    "node": "26.13.0",
+    "npm": "11.20.0"
+  },
+  "scripts": {
+    "check:runtime": "node scripts/check-runtime.mjs",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "lint": "oxlint --deny-warnings --report-unused-disable-directives main.js scripts tests playwright.config.mjs",
+    "validate": "node scripts/validate-site.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run check:runtime && npm run format:check && npm run lint && npm run validate && npm test",
+    "build": "npm run check:runtime && node scripts/build-site.mjs",
+    "preview": "node scripts/serve-site.mjs",
+    "test:browser": "playwright test",
+    "ci:gate": "node scripts/wait-for-ci.mjs",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "oxfmt": "0.77.0",
+    "oxlint": "1.89.0",
+    "parse5": "8.1.1"
+  }
+}

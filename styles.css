@@ -338,6 +338,7 @@ code {
 
 .section-heading .kicker {
   margin-bottom: 0.7rem;
+  color: #536b90;
 }
 
 .feature-grid {
@@ -499,6 +500,7 @@ code {
 .install-card {
   padding: 1.6rem;
   max-width: 46rem;
+  min-width: 0;
 }
 
 .install-card h2 + p {

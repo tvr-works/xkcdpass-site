@@ -1,0 +1,7 @@
+{
+  "javascript": { "maxRawKiB": 4, "maxGzipKiB": 1.5 },
+  "css": { "maxRawKiB": 16, "maxGzipKiB": 4 },
+  "html": { "maxRawKiB": 24, "maxGzipKiB": 8 },
+  "images": { "maxRawKiB": 320 },
+  "total": { "maxRawKiB": 400 }
+}
