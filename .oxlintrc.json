@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": { "correctness": "error", "suspicious": "error", "perf": "error" },
+  "env": { "browser": true, "node": true },
+  "overrides": [
+    {
+      "files": ["tests/**", "scripts/verify-deployment.mjs"],
+      "rules": { "eslint/no-await-in-loop": "off" }
+    }
+  ],
+  "ignorePatterns": ["dist/**", "node_modules/**", "playwright-report/**", "test-results/**"]
+}
