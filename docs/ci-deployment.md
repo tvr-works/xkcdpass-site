@@ -79,7 +79,9 @@ The coordinator completed the transfer to public `tvr-works/xkcdpass-site`, reta
 
 Local desktop Chromium at 1440×900 and mobile WebKit at 390×844 verified page identity, no runtime errors, and no horizontal overflow. Browser automation used Playwright because the Browser plugin was unavailable. Physical devices, manual screen readers, and real WebKit clipboard permission flows remain unverified. Local screenshot evidence is in `/private/tmp/xkcdpass-disclosure-jzopix62/qa-desktop.png` and `qa-mobile.png`.
 
-The coordinator verified Cloudflare App access for the transferred repository. Cloudflare reconnection, live gate acceptance/rejection, and publication verification remain pending the coordinated cutover. No publication success is claimed by this document.
+The coordinator saved and freshly verified selected-repository access for the existing Cloudflare GitHub App. Main integration `ce2dc99d029b1eb9815f0426d7e7c02c7c0d8dd9` passed [push CI](https://github.com/tvr-works/xkcdpass-site/actions/runs/42660854957) before hosting cutover. The existing Pages Git source was disconnected and reconnected through the documented source endpoints, then read back as `tvr-works/xkcdpass-site` with the same repository/project IDs, domains and deployment history. Both production-branch fields remain `main`, production automation remains enabled, and all branch previews remain enabled. Build command is `npm run ci:gate && npm run build`, output `dist`, root unchanged.
+
+The negative preview acceptance used disposable branch `codex/ci-publication-verification`, commit `860d3fb6ec9db6758be71663695cb3514f1cce5f`, and [intentionally failing push CI](https://github.com/tvr-works/xkcdpass-site/actions/runs/42661491097). Cloudflare deployment `94bc41cc-dd79-4e96-be25-5ad420fc6cd3` cloned the organization repository and rejected the failed run at the gate. Its deployment stage never started, and canonical production remained `135e43dc-50cc-4e22-ba05-0381005b3abf`. The intentional failure stays out of main. Successful preview and production publications are verified separately against their exact commits and immutable URLs.
 
 ## References
 
