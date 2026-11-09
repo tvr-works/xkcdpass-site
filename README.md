@@ -2,13 +2,13 @@
 
 Static HTML, CSS, and JavaScript for <https://xkcdpass.tvr.works>. This marketing repository is separate from the [xkcdpass application](https://github.com/tvr-works/xkcdpass); both are owned by TVR Works.
 
-The prepared Homebrew command is:
+Install xkcdpass from the live TVR Works Homebrew tap:
 
 ```sh
 brew install tvr-works/tap/xkcdpass
 ```
 
-This ownership-reference branch is **preview-only pending tap cutover**. Do not merge or publish its installation copy until the coordinator confirms that the destination organization formula and legacy-tap migration are live and validated. Application repository links already point to the transferred organization source.
+The former personal tap now redirects `xkcdpass` to `tvr-works/tap`.
 
 Use Node `26.13.0` and npm `11.20.0`:
 
