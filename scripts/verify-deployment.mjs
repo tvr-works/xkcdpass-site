@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 
 const origin = 'https://xkcdpass.tvr.works';
 const repository = 'tvr-works/xkcdpass-site';
+const application = 'https://github.com/tvr-works/xkcdpass';
 async function get(base, path) {
   return fetch(`${base}${path}`, {
     redirect: 'error',
@@ -81,9 +82,26 @@ export async function verifyDeployment({
     const html = await response.text();
     assert.ok(html.includes(`rel="canonical" href="${origin}/"`));
     assert.ok(html.includes('content="index,follow,max-image-preview:large"'));
-    assert.ok(
-      html.includes('https://github.com/tvanreenen/xkcdpass'),
-      'Keep the separate application links.',
+    assert.ok(!html.includes('github.com/tvanreenen/xkcdpass'), 'Legacy application reference');
+    assert.ok(!html.includes('tvanreenen/tap'), 'Legacy tap reference');
+    const links = [...html.matchAll(/href="(https:\/\/github\.com\/[^"]+)"/gu)].map(
+      (match) => match[1],
+    );
+    assert.equal(
+      links.filter((href) => href === application).length,
+      3,
+      'Canonical application links',
+    );
+    assert.ok(links.includes(`${application}/blob/main/LICENSE`), 'Canonical application license');
+    const applicationData = JSON.parse(
+      html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/u)?.[1] ?? 'null',
+    );
+    for (const key of ['downloadUrl', 'codeRepository', 'sameAs'])
+      assert.equal(applicationData?.[key], application, `Application ${key}`);
+    assert.equal(
+      html.match(/<div\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/div>/u)?.[1].trim(),
+      'brew install tvr-works/tap/xkcdpass',
+      'Organization formula install command',
     );
     for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gu)) {
       if (!/\bsrc=/u.test(match[1]))

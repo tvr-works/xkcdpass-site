@@ -47,7 +47,7 @@ before(async () => {
 afterEach(() => mock.restoreAll());
 const deploymentUrl = 'https://1234abcd.xkcdpass-site.pages.dev';
 const previewAlias = 'https://feature-check.xkcdpass-site.pages.dev';
-function responses(environment, overrides = {}) {
+function responses(environment, overrides = {}, changeHtml = (body) => body) {
   const hosts = new Set();
   mock.method(globalThis, 'fetch', async (input) => {
     const url = new URL(input);
@@ -71,7 +71,11 @@ function responses(environment, overrides = {}) {
         },
         { headers: { ...responseHeaders, 'Cache-Control': 'no-store' } },
       );
-    return new Response(files[file] ?? files['404.html'], {
+    const body =
+      file === 'index.html'
+        ? changeHtml(files[file].toString())
+        : (files[file] ?? files['404.html']);
+    return new Response(body, {
       status: files[file] ? 200 : 404,
       headers: responseHeaders,
     });
@@ -94,13 +98,45 @@ test('production smoke requires main and verifies its immutable URL and public d
   await verifyDeployment({ environment: 'production', deploymentUrl, sha: manifest.sha });
   assert.deepEqual(hosts, new Set([deploymentUrl, origin]));
 });
-for (const [description, overrides, pattern] of [
+for (const [description, overrides, pattern, changeHtml] of [
   ['wrong deployed commit', { sha: 'b'.repeat(40) }, /deployed SHA/u],
   ['wrong deployed branch', { branch: 'another-branch' }, /deployed branch/u],
+  [
+    'legacy application link',
+    {},
+    /Legacy application reference/u,
+    (html) =>
+      html.replace(
+        'href="https://github.com/tvr-works/xkcdpass"',
+        'href="https://github.com/tvanreenen/xkcdpass"',
+      ),
+  ],
+  [
+    'incorrect application license',
+    {},
+    /Canonical application license/u,
+    (html) => html.replace('/blob/main/LICENSE', '/blob/main/COPYING'),
+  ],
+  [
+    'incorrect download metadata',
+    {},
+    /Application downloadUrl/u,
+    (html) =>
+      html.replace(
+        '"downloadUrl": "https://github.com/tvr-works/xkcdpass"',
+        '"downloadUrl": "https://example.com/download"',
+      ),
+  ],
+  [
+    'unqualified installation command',
+    {},
+    /Organization formula install command/u,
+    (html) => html.replace('brew install tvr-works/tap/xkcdpass', 'brew install xkcdpass'),
+  ],
 ]) {
   test(`${description} fails all bounded smoke attempts`, async (t) => {
     t.mock.timers.enable({ apis: ['setTimeout'] });
-    responses('preview', overrides);
+    responses('preview', overrides, changeHtml);
     const pending = assert.rejects(
       verifyDeployment({
         environment: 'preview',

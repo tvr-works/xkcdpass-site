@@ -82,7 +82,7 @@ test('copy reports success, restores its label, and reports clipboard rejection'
   await button.click();
   await expect(page.getByRole('button', { name: 'Copied', exact: true })).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    'brew tap tvanreenen/tap && brew install xkcdpass',
+    'brew install tvr-works/tap/xkcdpass',
   );
   await expect(button).toBeVisible();
   await page.evaluate(() => {
@@ -104,7 +104,9 @@ test('preserves static content and mobile navigation without JavaScript', async 
     await page.goto('http://127.0.0.1:4175/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
-    await expect(page.locator('#install-command')).toContainText('brew install xkcdpass');
+    await expect(page.locator('#install-command')).toHaveText(
+      'brew install tvr-works/tap/xkcdpass',
+    );
   } finally {
     await context.close();
   }
@@ -180,10 +182,21 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     'content',
     'index,follow,max-image-preview:large',
   );
+  const application = 'https://github.com/tvr-works/xkcdpass';
   expect(
-    JSON.parse(await page.locator('script[type="application/ld+json"]').textContent())
-      .codeRepository,
-  ).toBe('https://github.com/tvanreenen/xkcdpass');
+    JSON.parse(await page.locator('script[type="application/ld+json"]').textContent()),
+  ).toMatchObject({
+    downloadUrl: application,
+    codeRepository: application,
+    sameAs: application,
+  });
+  await expect(page.locator(`a[href="${application}"]`)).toHaveCount(3);
+  await expect(page.locator('.footer-license-link')).toHaveAttribute(
+    'href',
+    `${application}/blob/main/LICENSE`,
+  );
+  expect(html).not.toContain('github.com/tvanreenen/xkcdpass');
+  expect(html).not.toContain('tvanreenen/tap');
   const robots = await request.get('/robots.txt');
   expect(robots.headers()['content-type']).toContain('text/plain');
   expect(await robots.text()).toBe(
