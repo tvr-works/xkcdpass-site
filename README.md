@@ -17,3 +17,5 @@ For local browser tests, install the matching Chromium and WebKit browsers once 
 There are no browser runtime dependencies or compilation framework. Formatting covers the automation, configuration, and documentation. Existing public files are excluded from formatter rewrites to preserve the published source. JavaScript linting includes `main.js`; HTML parsing, local reference checks, metadata tests, and browser coverage check the static site. There is no TypeScript source requiring a type-check step.
 
 See [CI and deployment](docs/ci-deployment.md) for the rollout settings, publication gate, indexing policy, and recovery procedure.
+
+The existing Cloudflare Pages project now follows the public organization repository. Production publishes from `main`, branch previews remain enabled, and both wait for successful CI for their exact commit. The disposable failed-preview probe verified that publication stops before build/deploy on a failed test; see the deployment runbook for evidence and recovery.
