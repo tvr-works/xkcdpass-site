@@ -17,8 +17,8 @@ test('renders the approved hero and all compiled assets without runtime errors',
   await expect(page.locator('.hero-subtitle')).toHaveText(
     'Cryptographically strong passphrases, generated locally in your terminal. Familiar words you can read, retype, and say aloud.',
   );
-  await expect(page.locator('.terminal-command')).toHaveText('$ xkcdpass --words 4 --separator -');
-  await expect(page.locator('.terminal-output')).toHaveText('turtle-rocket-cactus-donut');
+  await expect(page.locator('.terminal-command')).toHaveText('$ xkcdpass');
+  await expect(page.locator('.terminal-output')).toHaveText('turtlerocketcactusdonut');
   await expect(page.locator('.hero-illustration')).toBeVisible();
   expect(
     await page

@@ -77,12 +77,11 @@ function TerminalExample() {
       <div className="terminal-body">
         <pre className="terminal-command">
           <code>
-            <span aria-hidden="true">$ </span>xkcdpass --words 4{' '}
-            <span className="whitespace-nowrap">--separator -</span>
+            <span aria-hidden="true">$ </span>xkcdpass
           </code>
         </pre>
         <pre className="terminal-output">
-          <samp>turtle-rocket-cactus-donut</samp>
+          <samp>turtlerocketcactusdonut</samp>
         </pre>
       </div>
     </section>
