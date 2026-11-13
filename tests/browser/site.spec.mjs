@@ -20,6 +20,9 @@ test('renders the approved hero and all compiled assets without runtime errors',
   await expect(page.locator('.terminal-command')).toHaveText('$ xkcdpass');
   await expect(page.locator('.terminal-output')).toHaveText('turtlerocketcactusdonut');
   await expect(page.locator('.hero-illustration')).toBeVisible();
+  await expect(
+    page.getByRole('heading', { name: 'Why simple words can make strong passwords.' }),
+  ).toBeVisible();
   expect(
     await page
       .locator('.hero-illustration')
@@ -40,9 +43,9 @@ test('example and install navigation reach their visible targets on desktop and 
   await page.goto('/');
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.getByRole('link', { name: 'Examples', exact: true }).click();
-  await expect(page).toHaveURL(/#example$/u);
+  await expect(page).toHaveURL(/#usage$/u);
   await expect(
-    page.getByRole('region', { name: 'Example terminal command and output' }),
+    page.getByRole('heading', { name: 'Two flags. Your preferred format.', exact: true }),
   ).toBeInViewport();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('link', { name: 'Install', exact: true }).click();
@@ -74,7 +77,7 @@ test('copy reports success, restores its label, and reports clipboard rejection'
     };
   });
   await button.click();
-  await expect(page.getByRole('status')).toHaveText(
+  await expect(page.locator('.copy-status')).toHaveText(
     'Could not copy. Select the command and copy it manually.',
   );
   await expect(button).toBeEnabled();
@@ -99,6 +102,10 @@ test('preserves static content and mobile navigation without JavaScript', async 
     await page.goto('http://127.0.0.1:4175/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
+    await expect(page.locator('.entropy-result')).toHaveText(
+      'About 3.7 quadrillion possible sequences',
+    );
+    await expect(page.locator('.usage-example')).toContainText('xkcdpass --words 6 --separator -');
     await expect(page.locator('#install-command')).toHaveText(
       'brew install tvr-works/tap/xkcdpass',
     );
@@ -152,6 +159,8 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
     if (width === 767) stackedArtHeight = layout.height;
     if (width === 768) expect(layout.height).toBeCloseTo(stackedArtHeight, 0);
   }
+  await page.getByRole('button', { name: '6 words', exact: true }).click();
+  await page.getByRole('button', { name: 'How the math works' }).click();
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
@@ -213,7 +222,7 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     sameAs: application,
   });
   await expect(page.locator(`a[href="${application}"]`)).toHaveCount(2);
-  await expect(page.getByRole('link', { name: 'open source', exact: true })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'Open source', exact: true })).toHaveAttribute(
     'href',
     `${application}/blob/main/LICENSE`,
   );
@@ -262,4 +271,48 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     '/.git/config',
   ])
     expect((await request.get(path)).status()).toBe(404);
+});
+
+test('word count controls update the diagram, result, exact math, and screen-reader summary', async ({
+  page,
+}) => {
+  const errors = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+  await page.goto('/');
+  const selected = page.getByRole('button', { name: '4 words', exact: true });
+  await expect(selected).toHaveAttribute('aria-pressed', 'true');
+  await selected.focus();
+  await page.keyboard.press('ArrowLeft');
+  const three = page.getByRole('button', { name: '3 words', exact: true });
+  await expect(three).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(three).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('.word-choice')).toHaveCount(3);
+  await expect(page.locator('.entropy-result')).toHaveText(
+    'About 470.2 billion possible sequences',
+  );
+  await expect(page.locator('.entropy-bits')).toHaveText('38.8 bits of entropy');
+  await expect(page.locator('#strength output')).toContainText('3 independent words');
+  await three.click();
+  await expect(three).toHaveAttribute('aria-pressed', 'true');
+  const disclosure = page.getByRole('button', { name: 'How the math works' });
+  await disclosure.focus();
+  await page.keyboard.press('Enter');
+  await expect(disclosure).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.math-explanation')).toContainText('470,184,984,576');
+  await page.getByRole('button', { name: '6 words', exact: true }).click();
+  await expect(page.locator('.word-choice')).toHaveCount(6);
+  await expect(page.locator('.entropy-result')).toHaveText(
+    'About 221.1 sextillion possible sequences',
+  );
+  await expect(page.locator('.entropy-bits')).toHaveText('77.5 bits of entropy');
+  await expect(page.locator('.exact-count')).toHaveText('221,073,919,720,733,357,899,776');
+  await disclosure.focus();
+  await page.keyboard.press('Space');
+  await expect(disclosure).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.math-explanation')).toBeHidden();
+  expect(errors).toEqual([]);
 });

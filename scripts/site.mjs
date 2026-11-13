@@ -15,6 +15,7 @@ export const publicFiles = [
   '404.html',
   '404.css',
   'assets/passphrase-thought.webp',
+  'assets/entropy-annotation.webp',
   'assets/hero-background.webp',
   'assets/xkcdpass-og.png',
 ];

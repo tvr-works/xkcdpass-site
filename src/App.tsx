@@ -1,19 +1,16 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { EntropyExplorer } from '@/components/entropy-explorer';
+import { useHydrated } from '@/lib/use-hydrated';
 
 const application = 'https://github.com/tvr-works/xkcdpass';
 const installCommand = 'brew install tvr-works/tap/xkcdpass';
 
-// Keep the clipboard action out of the prerendered page until it hydrates.
-const subscribeReady = () => () => {};
-const getReady = () => true;
-const getServerReady = () => false;
-
 function InstallCommand() {
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
-  const ready = useSyncExternalStore(subscribeReady, getReady, getServerReady);
+  const ready = useHydrated();
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -88,6 +85,57 @@ function TerminalExample() {
   );
 }
 
+function UsageSection() {
+  return (
+    <section className="usage-section" id="usage" aria-labelledby="usage-title">
+      <h2 className="section-title" id="usage-title">
+        Two flags. Your preferred format.
+      </h2>
+      <dl className="flag-reference">
+        <div>
+          <dt>Word count</dt>
+          <dd>
+            <code>--words 6</code>
+            <span>Default: 4</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Separator</dt>
+          <dd>
+            <code>--separator -</code>
+            <span>Default: none</span>
+          </dd>
+        </div>
+      </dl>
+      <div className="usage-example" aria-label="Six-word passphrase example">
+        <pre>
+          <code>
+            <span aria-hidden="true">$ </span>xkcdpass --words 6{' '}
+            <span className="whitespace-nowrap">--separator -</span>
+          </code>
+        </pre>
+        <pre>
+          <samp>turtle-rocket-cactus-donut-ladder-lemon</samp>
+        </pre>
+      </div>
+      <p className="usage-note">Fixed separators add no entropy.</p>
+      <ul className="platform-links" aria-label="Platform support">
+        <li>
+          <a href={`${application}#installation`}>macOS Apple Silicon</a>
+        </li>
+        <li>
+          <a href={`${application}#installation`}>Linux x86_64</a>
+        </li>
+        <li>
+          <a href={`${application}#installation`}>
+            Other platforms <ArrowUpRight aria-hidden="true" />
+          </a>
+        </li>
+      </ul>
+    </section>
+  );
+}
+
 export default function App() {
   return (
     <div className="page" id="top">
@@ -104,7 +152,7 @@ export default function App() {
           </a>
         </div>
         <nav className="site-nav" aria-label="Primary">
-          <a className="nav-example" href="#example">
+          <a className="nav-example" href="#usage">
             Examples
           </a>
           <a className="nav-github" href={application}>
@@ -151,12 +199,21 @@ export default function App() {
           <Separator />
           <InstallCommand />
         </section>
+        <EntropyExplorer />
+        <UsageSection />
       </main>
       <footer className="site-footer shell">
-        <p>
-          Inspired by <a href="https://xkcd.com/936/">xkcd #936</a>. Independent and{' '}
-          <a href={`${application}/blob/main/LICENSE`}>open source</a>.
-        </p>
+        <p>Inspired by xkcd #936.</p>
+        <nav className="footer-links" aria-label="Project links">
+          <a href={`${application}#readme`}>
+            GitHub <ArrowUpRight aria-hidden="true" />
+          </a>
+          <a href="https://xkcd.com/936/">
+            Original comic <ArrowUpRight aria-hidden="true" />
+          </a>
+          <a href={`${application}/blob/main/LICENSE`}>Open source</a>
+        </nav>
+        <a href="https://tvr.works/software">by TVR Works</a>
       </footer>
     </div>
   );
