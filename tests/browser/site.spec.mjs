@@ -118,6 +118,7 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main$/u);
   await expect(page.locator('main')).toBeFocused();
+  let stackedArtHeight;
   for (const width of [320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
@@ -137,12 +138,18 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
     const layout = await page.locator('.hero-illustration').evaluate((image) => {
       const art = image.getBoundingClientRect();
       const terminal = document.querySelector('.terminal').getBoundingClientRect();
-      return { beside: art.left >= terminal.right, below: art.top >= terminal.bottom };
+      return {
+        beside: art.left >= terminal.right,
+        below: art.top >= terminal.bottom,
+        height: art.height,
+      };
     });
     expect(
       width >= 768 ? layout.beside : layout.below,
       `illustration placement at ${width}px`,
     ).toBe(true);
+    if (width === 767) stackedArtHeight = layout.height;
+    if (width === 768) expect(layout.height).toBeCloseTo(stackedArtHeight, 0);
   }
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])

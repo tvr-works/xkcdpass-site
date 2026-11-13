@@ -201,7 +201,7 @@
     background: var(--traffic-maximize);
   }
   .terminal-body {
-    @apply flex flex-col gap-6 p-3 sm:p-8;
+    @apply flex flex-col gap-6 p-3 sm:p-8 md:px-4 lg:px-8;
   }
   .terminal pre {
     @apply m-0 font-mono;
@@ -215,7 +215,7 @@
     overflow-wrap: anywhere;
   }
   .hero-illustration {
-    @apply mx-auto block h-auto w-56 max-w-full sm:w-72 md:w-48 lg:w-80;
+    @apply mx-auto block h-auto w-56 max-w-full sm:w-72 lg:w-80;
     filter: invert(1);
   }
   .installation {
@@ -264,8 +264,8 @@
 
 @media (min-width: 48rem) {
   .hero {
-    grid-template-columns: minmax(0, 1fr) 12rem;
-    column-gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) 18rem;
+    column-gap: 1rem;
   }
   .hero-copy {
     grid-column: 1 / -1;

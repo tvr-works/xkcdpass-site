@@ -48,3 +48,9 @@ At the user's request, side-by-side illustration placement now starts at `md` (4
 Production-browser evidence: `/private/tmp/xkcdpass-md-layout/tablet-768.jpg`, 768 × 1024 viewport pixels at density 1. The command/output fit, the illustration is beside the terminal, and the install strip remains reachable. In-app Browser logs contained no warnings/errors. Viewport override was reset and preview left open.
 
 Focused Chromium and WebKit responsive/keyboard/axe tests both passed. The existing width loop now also verifies the illustration is beside the terminal from 768px and below it at narrower widths, including 767/768 and 1023/1024 boundaries. Build/typecheck, lint, and formatting passed. Desktop/mobile appearance outside the changed tablet interval is preserved. Final result remains passed.
+
+### Illustration size correction
+
+The user clarified that changing the stacking threshold should not shrink the illustration. Removed the 192px tablet sizing override. Artwork now retains the prior 288 × 408px tablet size across 767/768px; its 320px desktop width is unchanged. The tablet grid reserves 288px for it, uses a 16px column gap and 16px terminal horizontal padding, and retains full-width headline/copy. The `--separator -` flag group stays together when the narrower terminal command wraps. No copy or font sizes changed.
+
+Current evidence: `/private/tmp/xkcdpass-md-layout/tablet-768-restored.jpg`, 768 × 1024 at density 1. Reviewed the rendered page and measured the illustration at 288 × 408.05 CSS pixels. A new continuity assertion compares art height immediately below and above the md boundary. Focused initial-render and responsive/keyboard/axe tests pass in both Chromium and WebKit (4 tests); source lint, build/typecheck, and format checks pass. This supersedes the smaller-artwork evidence above. Final result remains passed.
