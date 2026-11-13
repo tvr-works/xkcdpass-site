@@ -1,50 +1,50 @@
-# Entropy lesson and compact usage QA
+# Grouped continuation layout QA
 
 final result: passed
 
-The selected continuation adds only an entropy lesson and a two-flag usage reference, separated by whitespace. The hero now shows the actual default call (`xkcdpass`) with four joined words. Existing hero copy, illustration, responsive independent-column behavior, and installation command are retained.
+The approved two-column continuation is implemented with a shared, standard type scale: 36px section headings, 18px reading/UI/code text, and 48px numerical results. These sizes apply at mobile and desktop widths. All explanatory detail, exact calculations, security assumptions, interactive counts, and the math disclosure are retained.
 
 ## Visual truth and evidence
 
-- Selected mockup: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-1180d0f5-3051-4017-8feb-166f7b8338e9.png` (1073 × 1466 pixels).
-- Implementation: <http://127.0.0.1:4175/>. Final continuation capture: `/private/tmp/xkcdpass-below-fold-qa/below-fold-final.jpg` (1073 × 1525 pixels).
-- Comparison viewport: 1073 × 2800 CSS pixels, density 1. Both artifacts represent four words selected and the disclosure closed. The implementation is a content crop starting 76px above the section heading, through the complete footer. A tall viewport was used to paint all content; this browser's full-page screenshots otherwise leave off-screen content unpainted. There is no CSS dependence on viewport height in the continuation layout.
-- Combined comparison: `/private/tmp/xkcdpass-below-fold-qa/comparison-final.png`. Source left, implementation right, both at the same 536px display width. Source has bottom padding added to match the implementation's canvas; neither artifact is stretched.
-- Focused entropy comparison: `/private/tmp/xkcdpass-below-fold-qa/entropy-focused.png` (same relative crop of the formula/result, source above, implementation below).
-- Mobile (390 × 844, density 1): `/private/tmp/xkcdpass-below-fold-qa/mobile-default.jpg`, `mobile-expanded.jpg`, and `mobile-usage.jpg`. These show the wrapped word factors, readable alternate annotation, disclosure, usage reference, and complete wrapped six-word output.
+- Selected reference: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-0ecbce44-0bb4-4fbb-bf2a-94cd54dfbf82.png`, 1374 × 1145 pixels.
+- Local implementation: <http://127.0.0.1:4175/#strength>.
+- Desktop screenshot: `/private/tmp/xkcdpass-grouped-qa/desktop-final.jpg`, 1374 × 1154 pixels, captured in the in-app Browser at 1374 × 1400 CSS pixels, density 1. The screenshot is cropped from the painted viewport, starting 80px above the lesson through the footer. Default four words selected, math closed.
+- Full-view comparison: `/private/tmp/xkcdpass-grouped-qa/comparison-final.png`. Source left, implementation right, both displayed at 687px wide. Nine pixels of source-height difference are padded, never stretched. Both complete sections and the complete footer are visible.
+- Focused explorer comparison: `/private/tmp/xkcdpass-grouped-qa/entropy-focused.png`. Source left, implementation right, native pixel scale. Confirms the control/formula/result/summary grouping and the requested typography normalization.
+- Mobile evidence at 390 × 844 CSS pixels, density 1: `/private/tmp/xkcdpass-grouped-qa/mobile-default.jpg` (lesson copy), `mobile-expanded.jpg` (six-word result and math), `mobile-math.jpg` (remaining security detail), and `mobile-usage.jpg` (flags, platform links, worked example).
+- Narrow evidence: `/private/tmp/xkcdpass-grouped-qa/narrow-default.jpg`, 320 × 844 CSS pixels, density 1. The 48px result wraps between number and unit while remaining inside its panel. Controls retain 18px text and 44px targets.
 
-## Findings and iteration history
+## Findings and comparison history
 
-- First comparison (`comparison-first.png`): [P2] heading wrapped at a different word; the result lacked the selected emphasis; background `cover` scaled the original art over the taller page. Added a dedicated heading break at the appropriate width, used standard `text-5xl` for the desktop result, and repeated the existing background at its width-preserving aspect rather than stretching it to page height.
-- Final combined and focused comparisons reviewed after fixes. No actionable P0/P1/P2 findings remain.
-- The implementation retains the site's established Tailwind typography and container scale rather than copying every raster text size. Supporting text/control sizes are 14/16px, body 18/20px, section headings 30/36/48px; native monospace metrics vary by OS. These are intentional framework/context adaptations.
-- Small generated chalk contour/stroke differences, the additional existing license link in the footer, and modest total-height differences are P3/intentional. No unrelated sections or content were added.
+- No actionable P0/P1/P2 findings remain in the first completed visual comparison. No visual-fix iteration was necessary.
+- The reference's inconsistent raster type sizes are intentionally replaced with the approved three-step scale. This changes heading wrapping and reduces the calculation's display size. Reading text, control labels, monospace, flag notes, links, and footer share the same 18px size.
+- Established Geist/native monospace, max-width container, component radii, background asset, and semantic colors remain the design authority. The reference's exact type metrics, glow placement, and border curvature are intentional adaptations to the existing site rather than outstanding defects.
 
 ## Required fidelity surfaces
 
-- **Fonts/type:** existing self-hosted Geist and native monospace retained; standard weights and named Tailwind sizes. Header/default terminal and section hierarchy verified. Selected copy is retained except for technical details revealed in the disclosure and the required precise six-word calculation.
-- **Spacing/layout:** 24/32px internal rhythm, 96/128px before the lesson and usage, and 80/96px before the footer. No new section HRs. The word factors wrap together on small screens. The illustration still keeps its own column from 768px, with copy wrapping beside it; tests preserve height continuity across 767/768px.
-- **Colors/tokens:** existing midnight navy, white, gray, icy blue, translucent command surfaces, focus ring, and state colors. No new theme or hardcoded component-call colors. Background aspect remains stable as page height grows.
-- **Images:** real generated chalk brace/annotation at `public/assets/entropy-annotation.webp`, 2003 × 180, transparent lossless WebP, about 25 KiB. Black ink is displayed white using CSS inversion. Source generated image remains outside the repo. Mobile replaces the unreadably small annotation with equivalent live explanatory text. Existing hero illustration reused. No handcrafted SVG/CSS drawings substitute for artwork.
-- **Copy/content:** only the entropy explanation, word-count controls, math disclosure, compact usage, platform/source links, and footer. Hero: `$ xkcdpass` → `turtlerocketcactusdonut`. Usage: `xkcdpass --words 6 --separator -` → `turtle-rocket-cactus-donut-ladder-lemon`. No FAQ, use-case feature grid, repeat install prompt, strength meter, or cracking-time claim.
+- **Fonts and hierarchy:** shared `continuation-reading` utility uses Tailwind `text-lg` and `leading-7`; headings use `text-4xl` with tight leading; results use `text-5xl`. No responsive font-size variation in the continuation. Standard superscript/subscript math notation remains semantic. Geist is self-hosted; native monospace fallback is unchanged. Weight and color distinguish code, output, labels, and links without adding sizes. No clipping or truncation observed.
+- **Spacing and layout:** shared 5/7 column split from 1024px, 48px desktop column gap, 40px stacked gap, 96/128px whitespace between sections, and 16/32px panel padding. The explorer groups inputs, inline multiplication, result, bits, and disclosure inside one translucent frame. Usage groups plain flag/default pairs and platform links on the left, example/note on the right. No new section HRs. The former large brace and outlined static values are removed.
+- **Colors and tokens:** existing midnight navy, white, muted gray, icy blue, translucent terminal surface, selected control, and focus ring tokens. No new gradients or inline style exceptions. The background continues at its width-preserving aspect ratio.
+- **Assets:** existing hero illustration and background reused unchanged. The selected layout has no brace, so its unused raster asset and public-file entries were removed. No generated asset or custom drawing was added.
+- **Content:** public EFF wordlist, independent random selection, known list/count assumptions, exact integer counts, logarithmic entropy explanation, Go `crypto/rand`, and the warning about self-chosen phrases all remain. Both flag examples/defaults, fixed-separator note, platform links, and footer remain. Hero still shows the default call and joined output.
 
-## Math and accessibility
+## Interaction and verification
 
-- Exact possibilities use BigInt powers of 7,776. Human-readable magnitudes are rounded using integer arithmetic, avoiding precision loss or Intl's unsupported larger-unit fallback.
-- 3 words: 470,184,984,576 possibilities, 38.8 bits. 4: 3,656,158,440,062,976, 51.7 bits. 5: 28,430,288,029,929,701,376, 64.6 bits. 6: 221,073,919,720,733,357,899,776, 77.5 bits.
-- Six words calculate to 77.548875 bits; the one-decimal display is 77.5, correcting the README's earlier 77.6 rounding. No application source was changed in its separate repository.
-- Shadcn/Base UI ToggleGroup and Collapsible provide keyboard, pressed, focus, expanded, and control relationships. One selected count is always retained; keyboard arrows move between choices and Space selects. The result announces a complete textual equivalent in a polite live output. Decorative visual math is hidden from the accessibility tree to avoid repetitive number announcements.
-- Core default content is prerendered. Client-only controls are disabled until hydration. No-JavaScript visitors retain the default lesson, explanatory fallback, usage, navigation, and install instructions.
+- `npm run check` passed: runtime, formatting, Oxlint/shadcn lint, TypeScript, static HTML/reference/indexing validation, artifact budgets, and all 54 Node tests.
+- Full Chromium/WebKit browser suite: 15 passed, one intentional WebKit clipboard-permissions skip. Includes navigation, clipboard success/rejection, keyboard controls, screen-reader summary, exact math, no-JavaScript content, axe accessibility, security headers/CSP, true 404, and indexing metadata.
+- New observable acceptance check verifies the actual computed type sizes and explorer containment at 320, 390, 1024, and 1374px. It exercises every word count with math expanded and checks page overflow. Existing responsive/hero checks cover 320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, and 1920px.
+- In-app Browser manually verified desktop grouping, mobile six-word selection and expanded math, narrow four-word result, complete usage output, and console health. No warnings/errors. Temporary viewport override reset; local preview remains open.
+- Exact counts and entropy model unchanged: 3 words 38.8 bits, 4 words 51.7 bits, 5 words 64.6 bits, 6 words 77.5 bits. BigInt preserves exact sequence counts.
+- Build: approximately 800 KiB raw total, 89.7 KiB gzip JavaScript, 27.7 KiB raw / 5.6 KiB gzip CSS. No dependencies or budget increases. Strict CSP retained.
 
-## Verification
+## Implementation checklist
 
-- `npm run check` passed: runtime, formatting, Oxlint/shadcn lint, TypeScript, HTML/reference/indexing validation, static budgets, and all 54 Node tests. Numerical tests include exact counts beyond Number precision and unsupported word counts.
-- Full `npm run test:browser`: 13 passed; one intentional WebKit clipboard permission skip. After final visual changes, the render, responsive/keyboard/axe, and interactive math checks passed again in both engines (6 tests).
-- Responsive coverage includes 320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, and 1920px. Axe scans include six words and expanded math on desktop/mobile. Copy success/rejection, Examples/Install anchors, no-JavaScript content, true 404, robots/sitemap/canonical, CSP hashes, security headers, public asset allowlisting, and deployment checksums remain covered.
-- In-app Browser available through CUA; no browser fallback used. Production preview identity, no blank/error overlay, actual mobile six-word selection and disclosure expansion, and console health verified. No console warnings/errors. Preview is left running locally.
-- Final measured output: about 829 KiB raw total, 89.7 KiB gzip JavaScript, 30.7 KiB raw / 5.6 KiB gzip CSS. CSS raw guard increased from 30 to 32 KiB for the two sections and component states; other budgets remain unchanged. No new installed runtime dependencies were required; registry primitives were adapted to existing utility conventions and inline-style restrictions.
-- Exact-commit publication gate and strict CSP retained. Nothing pushed or deployed.
+- [x] Paired desktop sections and stacked mobile flow.
+- [x] Consistent shared typography and whitespace.
+- [x] Preserve explanatory detail and accessible interactions.
+- [x] Visual comparison, static checks, browser acceptance checks.
+- [x] Local incremental commits; nothing pushed or deployed.
 
-## Remaining limits
+## Follow-up polish and limits
 
-Physical-device and manual screen-reader testing were not performed. P3 font/raster differences noted above remain. Prior hero/design history is preserved in Git; local QA images are not published assets.
+No P3 fix is required for this scope. Physical-device and manual screen-reader testing were not performed. Native monospace metrics vary by OS. Reference and local QA screenshots are evidence only, not published assets. Earlier design history remains in Git.

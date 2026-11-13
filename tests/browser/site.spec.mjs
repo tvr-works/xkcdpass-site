@@ -102,9 +102,7 @@ test('preserves static content and mobile navigation without JavaScript', async 
     await page.goto('http://127.0.0.1:4175/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Primary' })).toBeVisible();
-    await expect(page.locator('.entropy-result')).toHaveText(
-      'About 3.7 quadrillion possible sequences',
-    );
+    await expect(page.locator('.entropy-result')).toHaveText('3.7 quadrillion possible sequences');
     await expect(page.locator('.usage-example')).toContainText('xkcdpass --words 6 --separator -');
     await expect(page.locator('#install-command')).toHaveText(
       'brew install tvr-works/tap/xkcdpass',
@@ -291,9 +289,7 @@ test('word count controls update the diagram, result, exact math, and screen-rea
   await page.keyboard.press('Space');
   await expect(three).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.word-choice')).toHaveCount(3);
-  await expect(page.locator('.entropy-result')).toHaveText(
-    'About 470.2 billion possible sequences',
-  );
+  await expect(page.locator('.entropy-result')).toHaveText('470.2 billion possible sequences');
   await expect(page.locator('.entropy-bits')).toHaveText('38.8 bits of entropy');
   await expect(page.locator('#strength output')).toContainText('3 independent words');
   await three.click();
@@ -305,9 +301,7 @@ test('word count controls update the diagram, result, exact math, and screen-rea
   await expect(page.locator('.math-explanation')).toContainText('470,184,984,576');
   await page.getByRole('button', { name: '6 words', exact: true }).click();
   await expect(page.locator('.word-choice')).toHaveCount(6);
-  await expect(page.locator('.entropy-result')).toHaveText(
-    'About 221.1 sextillion possible sequences',
-  );
+  await expect(page.locator('.entropy-result')).toHaveText('221.1 sextillion possible sequences');
   await expect(page.locator('.entropy-bits')).toHaveText('77.5 bits of entropy');
   await expect(page.locator('.exact-count')).toHaveText('221,073,919,720,733,357,899,776');
   await disclosure.focus();
@@ -315,4 +309,69 @@ test('word count controls update the diagram, result, exact math, and screen-rea
   await expect(disclosure).toHaveAttribute('aria-expanded', 'false');
   await expect(page.locator('.math-explanation')).toBeHidden();
   expect(errors).toEqual([]);
+});
+
+test('continuation keeps one reading scale and groups the explorer across responsive layouts', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'How the math works' }).click();
+  for (const width of [320, 390, 1024, 1374]) {
+    await page.setViewportSize({ width, height: 900 });
+    const typography = await page.evaluate(() => {
+      const sizes = (selector) => [
+        ...new Set(
+          [...document.querySelectorAll(selector)].map(
+            (element) => getComputedStyle(element).fontSize,
+          ),
+        ),
+      ];
+      return {
+        headings: sizes('.section-title'),
+        reading: sizes(
+          '.section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
+        ),
+        result: sizes('.entropy-number'),
+      };
+    });
+    expect(typography, `type scale at ${width}px`).toEqual({
+      headings: ['36px'],
+      reading: ['18px'],
+      result: ['48px'],
+    });
+    const layout = await page.evaluate(() => {
+      const bounds = (selector) => document.querySelector(selector).getBoundingClientRect();
+      const panel = bounds('.entropy-panel');
+      const copy = bounds('#strength .continuation-copy');
+      return {
+        beside: panel.left >= copy.right,
+        below: panel.top >= copy.bottom,
+        grouped: [
+          '.word-count-controls',
+          '.entropy-calculation',
+          '.entropy-result',
+          '.entropy-summary',
+        ].every((selector) => {
+          const rect = bounds(selector);
+          return (
+            rect.left >= panel.left &&
+            rect.right <= panel.right &&
+            rect.top >= panel.top &&
+            rect.bottom <= panel.bottom
+          );
+        }),
+      };
+    });
+    expect(width >= 1024 ? layout.beside : layout.below, `section placement at ${width}px`).toBe(
+      true,
+    );
+    expect(layout.grouped, `explorer grouping at ${width}px`).toBe(true);
+    for (const count of [3, 4, 5, 6]) {
+      await page.getByRole('button', { name: `${count} words`, exact: true }).click();
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
+        `${count}-word expanded lesson overflow at ${width}px`,
+      ).toBe(true);
+    }
+  }
 });
