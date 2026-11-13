@@ -1,62 +1,50 @@
-# Typography and spacing correction QA
+# Entropy lesson and compact usage QA
 
 final result: passed
 
-The user identified nonstandard type sizing and poor whitespace in the initial implementation. This review supersedes the earlier pixel-oriented acceptance: retain the approved composition, imagery, and copy, while using the framework's normal type scale and spacing rhythm.
+The selected continuation adds only an entropy lesson and a two-flag usage reference, separated by whitespace. The hero now shows the actual default call (`xkcdpass`) with four joined words. Existing hero copy, illustration, responsive independent-column behavior, and installation command are retained.
 
-## Evidence
+## Visual truth and evidence
 
-- Original visual target: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-f70925b7-465d-4264-a5bd-047621b06831.png`, 1422 × 1106 pixels.
-- Previous implementation: `/private/tmp/xkcdpass-hero-qa/desktop-final.jpg`, 1422 × 1119 pixels.
-- Current implementation: `/private/tmp/xkcdpass-type-spacing/desktop.jpg`, 1422 × 1106 viewport pixels, density 1, default route and neutral interaction state, <http://127.0.0.1:4175/>.
-- Combined before/after: `/private/tmp/xkcdpass-type-spacing/comparison.png`. Previous implementation at left, corrected implementation at right. Previous capture cropped to the same 1106-pixel viewport; both displayed at 50% with no layout rescaling.
-- Focused original/mock terminal and corrected terminal: `/private/tmp/xkcdpass-type-spacing/terminal-comparison.png`. Native-size crops, no stretching; the smaller window is intentional because excess fixed height was removed.
-- Mobile: `/private/tmp/xkcdpass-type-spacing/mobile.jpg` and `mobile-install.jpg`, 390 × 844, density 1. UI readback and production-browser screenshots reviewed; the final subsequent desktop-only terminal scale change does not affect mobile.
+- Selected mockup: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-1180d0f5-3051-4017-8feb-166f7b8338e9.png` (1073 × 1466 pixels).
+- Implementation: <http://127.0.0.1:4175/>. Final continuation capture: `/private/tmp/xkcdpass-below-fold-qa/below-fold-final.jpg` (1073 × 1525 pixels).
+- Comparison viewport: 1073 × 2800 CSS pixels, density 1. Both artifacts represent four words selected and the disclosure closed. The implementation is a content crop starting 76px above the section heading, through the complete footer. A tall viewport was used to paint all content; this browser's full-page screenshots otherwise leave off-screen content unpainted. There is no CSS dependence on viewport height in the continuation layout.
+- Combined comparison: `/private/tmp/xkcdpass-below-fold-qa/comparison-final.png`. Source left, implementation right, both at the same 536px display width. Source has bottom padding added to match the implementation's canvas; neither artifact is stretched.
+- Focused entropy comparison: `/private/tmp/xkcdpass-below-fold-qa/entropy-focused.png` (same relative crop of the formula/result, source above, implementation below).
+- Mobile (390 × 844, density 1): `/private/tmp/xkcdpass-below-fold-qa/mobile-default.jpg`, `mobile-expanded.jpg`, and `mobile-usage.jpg`. These show the wrapped word factors, readable alternate annotation, disclosure, usage reference, and complete wrapped six-word output.
 
-## Findings, fixes, and comparison history
+## Findings and iteration history
 
-- [P2, fixed] Disconnected type sizes: 26px buttons/install code, 20px footer, viewport-based custom body/terminal sizes, 750 font weight, and unusually tight headline leading. Replaced with Tailwind's named type utilities and regular/medium/semibold/bold weights. Display headings use normal line height; no fluid font-size formulas remain.
-- [P2, fixed] Crowded text and actions: subtitle margin was 0.6rem, action margin 0.15rem. Established 24px heading-to-body spacing and 32px body-to-actions spacing, with 48px before the terminal and 64px before installation.
-- [P2, fixed] Fragile image positioning and empty terminal: removed 103% image width, negative 9.1rem offset, fixed terminal minimum heights, and separate 700/1000/1440 tweaks. Desktop uses a real grid with the illustration spanning the copy/terminal rows and aligning at the bottom. Smaller widths follow normal document order. The window fits its content.
-- Initial corrected comparison confirmed hierarchy and rhythm at desktop and mobile. Final desktop review retained terminal prominence using standard 30px command and 48px output at the xl breakpoint, while keeping surrounding controls restrained. Responsive/axe tests were rerun in both engines after this adjustment.
-- Final combined/focused review: no actionable P0/P1/P2 findings remain. The original mockup's exact UI sizes and vertical placements are intentionally superseded by the user's correction.
+- First comparison (`comparison-first.png`): [P2] heading wrapped at a different word; the result lacked the selected emphasis; background `cover` scaled the original art over the taller page. Added a dedicated heading break at the appropriate width, used standard `text-5xl` for the desktop result, and repeated the existing background at its width-preserving aspect rather than stretching it to page height.
+- Final combined and focused comparisons reviewed after fixes. No actionable P0/P1/P2 findings remain.
+- The implementation retains the site's established Tailwind typography and container scale rather than copying every raster text size. Supporting text/control sizes are 14/16px, body 18/20px, section headings 30/36/48px; native monospace metrics vary by OS. These are intentional framework/context adaptations.
+- Small generated chalk contour/stroke differences, the additional existing license link in the footer, and modest total-height differences are P3/intentional. No unrelated sections or content were added.
 
 ## Required fidelity surfaces
 
-- **Typography:** Geist retained. UI/navigation/footer 14px; buttons 14/16px; body 18/20px. Headline uses 36/60/72/96px at standard breakpoints. Terminal command uses 14/20/24/30px; output 16/24/30/48px. All values come from named Tailwind utilities. Native monospace metrics still vary by OS (P3).
-- **Spacing/layout:** shared container and 4px-based Tailwind spacing utilities. Semantic gaps between copy, actions, demonstration, installation, and footer. Terminal no longer reserves unused vertical space. Image has a real grid track. Desktop and mobile controls remain reachable without page overflow.
-- **Colors/tokens:** existing dark navy, white, muted gray, icy-blue, translucent terminal, focus, and traffic-light tokens preserved. Header link hover excludes button anchors so it cannot override primary button contrast.
-- **Images:** exact existing generated background and four-object thought-bubble illustration reused without new drawings, distortion, or crop. Artwork and reaction remain recognizable. Lucide UI icons retained.
-- **Content:** approved headline/subtitle, invocation, four-word output, Homebrew command, and xkcd attribution unchanged. No terminal caption, new sections, or below-the-fold content added.
+- **Fonts/type:** existing self-hosted Geist and native monospace retained; standard weights and named Tailwind sizes. Header/default terminal and section hierarchy verified. Selected copy is retained except for technical details revealed in the disclosure and the required precise six-word calculation.
+- **Spacing/layout:** 24/32px internal rhythm, 96/128px before the lesson and usage, and 80/96px before the footer. No new section HRs. The word factors wrap together on small screens. The illustration still keeps its own column from 768px, with copy wrapping beside it; tests preserve height continuity across 767/768px.
+- **Colors/tokens:** existing midnight navy, white, gray, icy blue, translucent command surfaces, focus ring, and state colors. No new theme or hardcoded component-call colors. Background aspect remains stable as page height grows.
+- **Images:** real generated chalk brace/annotation at `public/assets/entropy-annotation.webp`, 2003 × 180, transparent lossless WebP, about 25 KiB. Black ink is displayed white using CSS inversion. Source generated image remains outside the repo. Mobile replaces the unreadably small annotation with equivalent live explanatory text. Existing hero illustration reused. No handcrafted SVG/CSS drawings substitute for artwork.
+- **Copy/content:** only the entropy explanation, word-count controls, math disclosure, compact usage, platform/source links, and footer. Hero: `$ xkcdpass` → `turtlerocketcactusdonut`. Usage: `xkcdpass --words 6 --separator -` → `turtle-rocket-cactus-donut-ladder-lemon`. No FAQ, use-case feature grid, repeat install prompt, strength meter, or cracking-time claim.
+
+## Math and accessibility
+
+- Exact possibilities use BigInt powers of 7,776. Human-readable magnitudes are rounded using integer arithmetic, avoiding precision loss or Intl's unsupported larger-unit fallback.
+- 3 words: 470,184,984,576 possibilities, 38.8 bits. 4: 3,656,158,440,062,976, 51.7 bits. 5: 28,430,288,029,929,701,376, 64.6 bits. 6: 221,073,919,720,733,357,899,776, 77.5 bits.
+- Six words calculate to 77.548875 bits; the one-decimal display is 77.5, correcting the README's earlier 77.6 rounding. No application source was changed in its separate repository.
+- Shadcn/Base UI ToggleGroup and Collapsible provide keyboard, pressed, focus, expanded, and control relationships. One selected count is always retained; keyboard arrows move between choices and Space selects. The result announces a complete textual equivalent in a polite live output. Decorative visual math is hidden from the accessibility tree to avoid repetitive number announcements.
+- Core default content is prerendered. Client-only controls are disabled until hydration. No-JavaScript visitors retain the default lesson, explanatory fallback, usage, navigation, and install instructions.
 
 ## Verification
 
-- `npm run check`: formatting, Oxlint/shadcn lint, TypeScript, source/indexing validation, build budgets, and 49 Node tests passed.
-- Full `npm run test:browser`: 11 passed; one intentional WebKit clipboard permission skip. Final desktop terminal type adjustment followed by a focused Chromium/WebKit responsive, keyboard, and axe rerun: 2 passed.
-- Breakpoints checked at 320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, and 1920 pixels, including single-line passphrase output. Keyboard scrolling now checks the genuinely overflowing install command at 320px, rather than assuming overflow at 390px after reducing its font size.
-- Browser path: available in-app Browser through CUA. Production preview identity and meaningful content confirmed, no framework overlay, no console errors/warnings. Mobile Install anchor and actual Copy action verified; button changed to Copied and announced Install command copied. Automated clipboard success/rejection and no-JavaScript content remain covered.
-- Final production build passed with strict CSP, public metadata/robots/sitemap, true 404, checksums, and static publication gate intact. No deployment performed.
+- `npm run check` passed: runtime, formatting, Oxlint/shadcn lint, TypeScript, HTML/reference/indexing validation, static budgets, and all 54 Node tests. Numerical tests include exact counts beyond Number precision and unsupported word counts.
+- Full `npm run test:browser`: 13 passed; one intentional WebKit clipboard permission skip. After final visual changes, the render, responsive/keyboard/axe, and interactive math checks passed again in both engines (6 tests).
+- Responsive coverage includes 320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, and 1920px. Axe scans include six words and expanded math on desktop/mobile. Copy success/rejection, Examples/Install anchors, no-JavaScript content, true 404, robots/sitemap/canonical, CSP hashes, security headers, public asset allowlisting, and deployment checksums remain covered.
+- In-app Browser available through CUA; no browser fallback used. Production preview identity, no blank/error overlay, actual mobile six-word selection and disclosure expansion, and console health verified. No console warnings/errors. Preview is left running locally.
+- Final measured output: about 829 KiB raw total, 89.7 KiB gzip JavaScript, 30.7 KiB raw / 5.6 KiB gzip CSS. CSS raw guard increased from 30 to 32 KiB for the two sections and component states; other budgets remain unchanged. No new installed runtime dependencies were required; registry primitives were adapted to existing utility conventions and inline-style restrictions.
+- Exact-commit publication gate and strict CSP retained. Nothing pushed or deployed.
 
 ## Remaining limits
 
-Manual screen-reader and physical-device checks were not performed. Native monospace glyphs and original generated ink contours retain minor P3 differences from the reference. The earlier site remains in Git for later below-the-fold selection. Local screenshots are review evidence, not public assets.
-
-## Tablet breakpoint follow-up
-
-At the user's request, side-by-side illustration placement now starts at `md` (48rem / 768px). At 768–1023px, the copy spans the full grid width; the terminal and a 192px illustration share the next row with a 24px column gap. At `lg` (1024px), the existing 320px artwork and desktop grid return. Below 768px, the art remains below the terminal. No negative offsets or new type sizes were introduced.
-
-Production-browser evidence: `/private/tmp/xkcdpass-md-layout/tablet-768.jpg`, 768 × 1024 viewport pixels at density 1. The command/output fit, the illustration is beside the terminal, and the install strip remains reachable. In-app Browser logs contained no warnings/errors. Viewport override was reset and preview left open.
-
-Focused Chromium and WebKit responsive/keyboard/axe tests both passed. The existing width loop now also verifies the illustration is beside the terminal from 768px and below it at narrower widths, including 767/768 and 1023/1024 boundaries. Build/typecheck, lint, and formatting passed. Desktop/mobile appearance outside the changed tablet interval is preserved. Final result remains passed.
-
-### Illustration size correction
-
-The user clarified that changing the stacking threshold should not shrink the illustration. Removed the 192px tablet sizing override. Artwork now retains the prior 288 × 408px tablet size across 767/768px; its 320px desktop width is unchanged. The tablet grid reserves 288px for it, uses a 16px column gap and 16px terminal horizontal padding, and retains full-width headline/copy. The `--separator -` flag group stays together when the narrower terminal command wraps. No copy or font sizes changed.
-
-Current evidence: `/private/tmp/xkcdpass-md-layout/tablet-768-restored.jpg`, 768 × 1024 at density 1. Reviewed the rendered page and measured the illustration at 288 × 408.05 CSS pixels. A new continuity assertion compares art height immediately below and above the md boundary. Focused initial-render and responsive/keyboard/axe tests pass in both Chromium and WebKit (4 tests); source lint, build/typecheck, and format checks pass. This supersedes the smaller-artwork evidence above. Final result remains passed.
-
-### Persistent image column clarification
-
-The user clarified that copy must wrap in its own left column throughout the side-by-side range. Removed the tablet copy's full-width span and placed the illustration in the right column spanning both hero rows from 768px upward. It retains its existing 288 × 408px tablet size. Below 768px, the whole image moves below the copy/terminal. This supersedes the full-width tablet-copy statements above.
-
-Verified at 768 × 1024 in the in-app Browser: copy right edge 432px, artwork left edge 448px, artwork dimensions 288 × 408.05px; heading/subtitle wrap within the left column. Evidence: `/private/tmp/xkcdpass-md-layout/tablet-own-column.jpg`. Chromium and WebKit responsive/keyboard/axe checks passed (2 tests); the layout assertion now checks the artwork is beside both copy and terminal throughout the side-by-side range. Lint, build/typecheck, and formatting pass. Final result remains passed.
+Physical-device and manual screen-reader testing were not performed. P3 font/raster differences noted above remain. Prior hero/design history is preserved in Git; local QA images are not published assets.

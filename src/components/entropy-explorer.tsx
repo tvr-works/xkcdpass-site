@@ -23,7 +23,7 @@ export function EntropyExplorer() {
     <section className="entropy-section" id="strength" aria-labelledby="entropy-title">
       <h2 className="section-title" id="entropy-title">
         Why simple words can make
-        <br className="desktop-break" /> strong passwords.
+        <br className="section-break" /> strong passwords.
       </h2>
       <p className="section-intro">
         Every word is an independent random choice from {choices} possibilities.

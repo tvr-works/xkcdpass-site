@@ -116,7 +116,8 @@
 @layer components {
   .page {
     min-height: 100svh;
-    background: var(--background) url('/assets/hero-background.webp') center top / cover no-repeat;
+    background: var(--background) url('/assets/hero-background.webp') center top / 100% auto
+      repeat-y;
   }
   .shell {
     @apply mx-auto w-full max-w-7xl px-6 sm:px-8;
@@ -343,6 +344,9 @@
   .entropy-section {
     @apply mt-24 scroll-mt-8 sm:mt-32;
   }
+  .section-break {
+    @apply hidden lg:block;
+  }
   .section-title {
     @apply text-3xl leading-tight font-bold tracking-tight sm:text-4xl lg:text-5xl;
   }
@@ -379,7 +383,7 @@
     @apply mt-6 text-sm leading-6 text-muted-foreground sm:hidden;
   }
   .entropy-result {
-    @apply mt-8 text-2xl leading-tight font-semibold tracking-tight text-accent sm:text-3xl lg:text-4xl;
+    @apply mt-8 text-2xl leading-tight font-semibold tracking-tight text-accent sm:text-3xl lg:text-5xl;
   }
   .entropy-summary {
     @apply mt-2 flex flex-wrap items-center gap-x-8 gap-y-1;
