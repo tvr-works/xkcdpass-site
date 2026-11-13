@@ -138,8 +138,9 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
     const layout = await page.locator('.hero-illustration').evaluate((image) => {
       const art = image.getBoundingClientRect();
       const terminal = document.querySelector('.terminal').getBoundingClientRect();
+      const copy = document.querySelector('.hero-copy').getBoundingClientRect();
       return {
-        beside: art.left >= terminal.right,
+        beside: art.left >= terminal.right && art.left >= copy.right,
         below: art.top >= terminal.bottom,
         height: art.height,
       };
