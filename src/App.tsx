@@ -117,7 +117,7 @@ export default function App() {
       </header>
       <main className="shell" id="main" tabIndex={-1}>
         <section className="hero" aria-labelledby="hero-title">
-          <div className="flex flex-col">
+          <div className="hero-copy">
             <p className="eyebrow">Open source / Command line</p>
             <h1 id="hero-title">
               Hard to guess.
@@ -129,25 +129,23 @@ export default function App() {
               <br className="desktop-break" /> Familiar words you can read, retype, and say aloud.
             </p>
             <div className="hero-actions">
-              <a className={buttonVariants({ size: 'hero' })} href="#install">
+              <a className={buttonVariants({ size: 'lg' })} href="#install">
                 Install xkcdpass
               </a>
-              <a className={buttonVariants({ variant: 'link', size: 'hero' })} href={application}>
+              <a className={buttonVariants({ variant: 'link', size: 'lg' })} href={application}>
                 View on GitHub <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
               </a>
             </div>
           </div>
-          <div className="hero-demo">
-            <TerminalExample />
-            <img
-              className="hero-illustration"
-              src="/assets/passphrase-thought.webp"
-              width="962"
-              height="1363"
-              alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can pass that along.’"
-              fetchPriority="high"
-            />
-          </div>
+          <TerminalExample />
+          <img
+            className="hero-illustration"
+            src="/assets/passphrase-thought.webp"
+            width="962"
+            height="1363"
+            alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can pass that along.’"
+            fetchPriority="high"
+          />
         </section>
         <section className="installation" aria-label="Install xkcdpass">
           <Separator />

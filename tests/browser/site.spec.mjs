@@ -118,7 +118,7 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main$/u);
   await expect(page.locator('main')).toBeFocused();
-  for (const width of [320, 360, 390, 700, 701, 1000, 1001, 1422, 1920]) {
+  for (const width of [320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
@@ -144,6 +144,7 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
   const mobile = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
+  await page.setViewportSize({ width: 320, height: 844 });
   await page.locator('#install-command').focus();
   await expect(page.locator('#install-command')).toBeFocused();
   if (browserName === 'chromium') {

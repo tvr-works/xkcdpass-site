@@ -67,75 +67,50 @@
 }
 
 @utility ui-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  gap: 0.65rem;
-  border: 1px solid transparent;
-  border-radius: 0.875rem;
-  font: inherit;
-  font-weight: 600;
-  white-space: nowrap;
+  @apply inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-transparent font-medium whitespace-nowrap transition-colors;
+  font-family: inherit;
   cursor: pointer;
-  transition:
-    background-color 150ms,
-    color 150ms;
   &:disabled {
     cursor: default;
     opacity: 0.5;
   }
   & svg {
-    width: 1.15em;
-    height: 1.15em;
-    flex-shrink: 0;
+    @apply size-4 shrink-0;
   }
 }
 @utility button-primary {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: inset 0 0 0 1px #00000012;
+  @apply bg-primary text-primary-foreground;
   &:hover {
     background: var(--accent);
   }
 }
 @utility button-ghost {
-  background: transparent;
-  color: var(--foreground);
+  @apply bg-transparent text-foreground;
   &:hover {
-    background: #ffffff12;
+    background: var(--terminal-bar);
   }
 }
 @utility button-link {
-  padding-inline: 0;
-  background: transparent;
-  color: var(--accent);
-  font-weight: 400;
+  @apply bg-transparent text-accent;
   &:hover {
     text-decoration: underline;
     text-underline-offset: 0.25em;
   }
 }
 @utility button-default {
-  min-height: 3rem;
-  padding: 0.6rem 1.65rem;
-  font-size: 1.25rem;
+  @apply h-10 px-4 text-sm;
 }
-@utility button-hero {
-  min-height: 3.875rem;
-  padding: 0.65rem 2.25rem;
-  font-size: 1.625rem;
+@utility button-lg {
+  @apply h-12 text-base;
+  &:not(.button-link) {
+    @apply px-6;
+  }
 }
 @utility button-icon {
-  width: 3rem;
-  height: 3rem;
-  padding: 0.7rem;
-  border-radius: 0.5rem;
+  @apply size-10 p-2;
 }
 @utility ui-separator {
-  height: 1px;
-  width: 100%;
-  background: var(--border);
+  @apply h-px w-full bg-border;
 }
 
 @layer components {
@@ -144,122 +119,77 @@
     background: var(--background) url('/assets/hero-background.webp') center top / cover no-repeat;
   }
   .shell {
-    width: min(90%, 1280px);
-    margin-inline: auto;
+    @apply mx-auto w-full max-w-7xl px-6 sm:px-8;
   }
   .site-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    padding-block: 1.3rem;
+    @apply flex items-center justify-between gap-6 py-6;
   }
   .brand-group {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
+    @apply flex items-center gap-6;
   }
   .brand {
-    font-size: 2.5rem;
-    font-weight: 750;
-    letter-spacing: -0.045em;
-    line-height: 1;
+    @apply text-2xl leading-none font-bold tracking-tight;
   }
   .brand-credit {
-    font-size: 1.05rem;
+    @apply hidden text-sm text-muted-foreground lg:block;
   }
   .brand-credit:hover,
-  .site-nav > a:hover {
+  .site-nav > a:not(.ui-button):hover {
     color: var(--accent);
   }
   .site-nav {
-    display: flex;
-    align-items: center;
-    gap: 2.5rem;
-    font-size: 1.25rem;
+    @apply flex items-center gap-6 text-sm;
+  }
+  .nav-example {
+    @apply hidden md:block;
   }
   .nav-github {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+    @apply hidden items-center gap-2 sm:inline-flex;
   }
   .nav-github svg {
-    width: 1.25em;
-    height: 1.25em;
+    @apply size-4;
   }
   .hero {
-    padding-top: 1.25rem;
+    @apply grid gap-12 pt-12;
+  }
+  .hero-copy {
+    @apply flex flex-col items-start;
   }
   .eyebrow {
-    margin: 0 0 1rem;
-    font-size: 0.95rem;
-    color: var(--accent);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
+    @apply mb-6 text-xs leading-4 tracking-widest text-accent uppercase;
   }
   .hero h1 {
-    margin: 0;
-    font-size: clamp(3.5rem, 7vw, 6rem);
-    font-weight: 750;
-    line-height: 0.87;
-    letter-spacing: -0.045em;
+    @apply text-4xl leading-none font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl;
   }
   .hero-subtitle {
-    margin: 0.6rem 0 0;
-    color: var(--muted-foreground);
-    font-size: clamp(1.1rem, 1.83vw, 1.625rem);
-    line-height: 1.15;
-    letter-spacing: -0.015em;
+    @apply mt-6 max-w-4xl text-lg leading-7 text-muted-foreground sm:text-xl sm:leading-8;
+  }
+  .desktop-break {
+    @apply hidden xl:block;
   }
   .hero-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 2.4rem;
-    margin-top: 0.15rem;
-  }
-  .hero-demo {
-    display: grid;
-    grid-template-columns: minmax(0, 2.6fr) minmax(0, 1fr);
-    gap: 1rem;
-    align-items: start;
-    margin-top: 3.125rem;
+    @apply mt-8 flex flex-wrap items-center gap-4 sm:gap-6;
   }
   .terminal {
-    min-width: 0;
-    min-height: 20.5rem;
-    overflow: hidden;
-    border: 1px solid var(--terminal-border);
-    border-radius: 1.125rem;
+    @apply min-w-0 overflow-hidden rounded-xl border;
+    border-color: var(--terminal-border);
     background: var(--terminal);
-    box-shadow: inset 0 0 0 1px #ffffff0a;
     backdrop-filter: blur(8px);
     scroll-margin-top: 2rem;
   }
   .terminal-titlebar {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 3.1rem;
-    border-bottom: 1px solid var(--terminal-border);
+    @apply relative flex h-11 items-center justify-center border-b;
+    border-color: var(--terminal-border);
     background: var(--terminal-bar);
   }
   .terminal-titlebar h2 {
-    margin: 0;
-    font-size: 1.375rem;
-    font-weight: 400;
+    @apply text-sm font-normal;
   }
   .terminal-controls {
-    position: absolute;
-    left: 1.25rem;
-    display: flex;
-    gap: 0.75rem;
+    @apply absolute left-4 flex gap-2;
   }
   .terminal-controls span {
-    width: 1.2rem;
-    height: 1.2rem;
-    border-radius: 50%;
+    @apply size-3 rounded-full;
   }
   .terminal-close {
     background: var(--traffic-close);
@@ -271,115 +201,60 @@
     background: var(--traffic-maximize);
   }
   .terminal-body {
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-    padding: 1.65rem;
+    @apply flex flex-col gap-6 p-3 sm:p-8;
   }
   .terminal pre {
-    margin: 0;
-    font-family: var(--font-mono);
-    line-height: 1.4;
+    @apply m-0 font-mono;
   }
   .terminal-command {
-    font-size: clamp(0.875rem, 2.9vw, 2.625rem);
-    white-space: pre-wrap;
+    @apply text-sm leading-6 whitespace-pre-wrap sm:text-xl sm:leading-8 lg:text-2xl xl:text-3xl xl:leading-9;
     overflow-wrap: anywhere;
-    letter-spacing: -0.03em;
   }
   .terminal-output {
-    font-size: clamp(1rem, 3.8vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    white-space: pre-wrap;
+    @apply text-base leading-tight font-semibold tracking-tight whitespace-pre-wrap sm:text-2xl lg:text-3xl xl:text-5xl;
     overflow-wrap: anywhere;
   }
   .hero-illustration {
-    display: block;
-    width: 103%;
-    max-width: none;
-    height: auto;
-    margin-top: -9.1rem;
+    @apply mx-auto block h-auto w-56 max-w-full sm:w-72 lg:w-80;
     filter: invert(1);
   }
   .installation {
-    padding-top: 4.95rem;
+    @apply mt-16;
   }
   .installation:has(.copy-status:not(:empty)) {
-    margin-bottom: 1rem;
+    @apply mb-4;
   }
   .install-row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 2.7rem;
-    padding-top: 1.6rem;
+    @apply relative flex flex-col items-start gap-4 pt-8 sm:flex-row sm:items-center sm:gap-8;
     scroll-margin-top: 2rem;
   }
   .install-row h2 {
-    margin: 0;
-    flex-shrink: 0;
-    text-transform: uppercase;
-    font-size: 1.125rem;
-    letter-spacing: 0.18em;
-    font-weight: 400;
+    @apply shrink-0 text-xs leading-4 font-medium tracking-widest uppercase;
   }
   .install-command {
-    display: flex;
-    align-items: center;
-    min-width: 0;
-    width: 44.5rem;
-    border: 1px solid var(--border);
-    border-radius: 0.875rem;
+    @apply flex w-full min-w-0 max-w-2xl items-center rounded-lg border border-border;
     background: var(--terminal-bar);
   }
   .install-command code {
-    display: block;
-    flex: 1;
-    min-width: 0;
-    padding: 0.45rem 1rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    font-family: var(--font-mono);
-    font-size: 1.625rem;
-    letter-spacing: -0.03em;
+    @apply block min-w-0 flex-1 overflow-x-auto px-4 py-3 font-mono text-sm whitespace-nowrap sm:text-base;
     scrollbar-width: thin;
   }
   .install-command code:focus-visible {
+    @apply rounded-lg;
     outline-offset: -3px;
-    border-radius: 0.75rem;
   }
   .copy-status {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    margin: 0.4rem 0 0;
-    color: var(--accent);
-    font-size: 0.875rem;
+    @apply absolute top-full left-0 mt-2 text-sm leading-5 text-accent;
   }
   .site-footer {
-    padding-top: 1.2rem;
-    padding-bottom: 2.5rem;
-    font-size: 1.25rem;
-    font-style: italic;
-    font-synthesis: style;
-  }
-  .site-footer p {
-    margin: 0;
+    @apply pt-8 pb-12 text-sm leading-6 text-muted-foreground;
   }
   .site-footer a:hover {
     text-decoration: underline;
     text-underline-offset: 0.15em;
   }
   .skip-link {
-    position: fixed;
-    top: 0.5rem;
-    left: 1rem;
-    z-index: 10;
-    padding: 0.7rem 1rem;
-    background: var(--primary);
-    color: var(--primary-foreground);
-    border-radius: 0.5rem;
+    @apply fixed top-2 left-4 z-10 rounded-lg bg-primary px-4 py-3 text-primary-foreground;
     transform: translateY(-200%);
   }
   .skip-link:focus {
@@ -387,171 +262,18 @@
   }
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 64rem) {
   .hero {
-    padding-top: 1.6rem;
+    grid-template-columns: minmax(0, 1fr) 20rem;
   }
-}
-@media (max-width: 1000px) {
-  .terminal-output {
-    font-size: clamp(1rem, 3.5vw, 2.2rem);
-  }
-  .brand-credit {
-    display: none;
-  }
-  .site-nav {
-    gap: 1.5rem;
-  }
-  .hero-demo {
-    grid-template-columns: minmax(0, 2.5fr) minmax(0, 1fr);
+  .hero-copy,
+  .terminal {
+    grid-column: 1;
   }
   .hero-illustration {
-    width: 100%;
-    margin-top: -3rem;
-  }
-  .terminal {
-    min-height: 15rem;
-  }
-  .terminal-titlebar h2 {
-    font-size: 1rem;
-  }
-  .terminal-controls {
-    gap: 0.45rem;
-    left: 0.8rem;
-  }
-  .terminal-controls span {
-    width: 0.75rem;
-    height: 0.75rem;
-  }
-  .terminal-body {
-    padding: 1rem;
-    gap: 1.5rem;
-  }
-  .installation {
-    padding-top: 3rem;
-  }
-  .install-row {
-    gap: 1.5rem;
-  }
-  .install-command code {
-    font-size: 1.1rem;
-  }
-}
-@media (max-width: 700px) {
-  .shell {
-    width: calc(100% - 2.5rem);
-  }
-  .site-header {
-    gap: 0.75rem;
-    padding-block: 1.25rem;
-  }
-  .brand {
-    font-size: 1.75rem;
-  }
-  .site-nav {
-    gap: 1rem;
-    font-size: 0.95rem;
-  }
-  .nav-example {
-    display: none;
-  }
-  .site-nav .ui-button {
-    min-height: 2.75rem;
-    padding-inline: 1rem;
-    font-size: 1rem;
-  }
-  .hero {
-    padding-top: 2.25rem;
-  }
-  .eyebrow {
-    margin-bottom: 1.5rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.22em;
-  }
-  .hero h1 {
-    font-size: clamp(2.5rem, 11vw, 4rem);
-    line-height: 0.97;
-  }
-  .hero-subtitle {
-    margin-top: 1.25rem;
-    font-size: 1.05rem;
-    line-height: 1.5;
-  }
-  .desktop-break {
-    display: none;
-  }
-  .hero-actions {
-    align-items: flex-start;
-    gap: 0.6rem 1.5rem;
-    margin-top: 1.5rem;
-  }
-  .button-hero {
-    min-height: 3.25rem;
-    padding-inline: 1.25rem;
-    font-size: 1.05rem;
-  }
-  .button-link {
-    padding-inline: 0;
-  }
-  .hero-demo {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.25rem;
-    margin-top: 2.5rem;
-  }
-  .terminal {
-    min-height: 11.5rem;
-    border-radius: 0.875rem;
-  }
-  .terminal-titlebar {
-    min-height: 2.5rem;
-  }
-  .terminal-titlebar h2 {
-    font-size: 0.875rem;
-  }
-  .terminal-body {
-    padding: 1.25rem 0.875rem;
-    gap: 1.5rem;
-  }
-  .terminal-command {
-    font-size: clamp(0.75rem, 3.4vw, 1.15rem);
-  }
-  .terminal-output {
-    font-size: clamp(0.9rem, 4.1vw, 1.65rem);
-    letter-spacing: -0.04em;
-  }
-  .hero-illustration {
-    width: min(80%, 20rem);
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  .installation {
-    padding-top: 3.25rem;
-  }
-  .install-row {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-    padding-top: 1.5rem;
-  }
-  .install-row h2 {
-    font-size: 0.875rem;
-  }
-  .install-command {
-    width: 100%;
-  }
-  .install-command code {
-    font-size: 0.95rem;
-    padding-inline: 0.7rem;
-  }
-  .site-footer {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    padding-block: 2.25rem;
-  }
-}
-@media (max-width: 360px) {
-  .nav-github {
-    display: none;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
   }
 }
 @media (prefers-reduced-motion: reduce) {

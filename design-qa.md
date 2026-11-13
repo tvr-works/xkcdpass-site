@@ -1,48 +1,42 @@
-# Approved hero implementation QA
+# Typography and spacing correction QA
 
 final result: passed
 
-Reviewed the selected mockup against the compiled, prerendered page at <http://127.0.0.1:4175/>. This pass covers the hero, terminal example, illustration, install strip, and footer. Below-the-fold sections remain deferred.
+The user identified nonstandard type sizing and poor whitespace in the initial implementation. This review supersedes the earlier pixel-oriented acceptance: retain the approved composition, imagery, and copy, while using the framework's normal type scale and spacing rhythm.
 
-## Visual evidence
+## Evidence
 
-- Source: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-f70925b7-465d-4264-a5bd-047621b06831.png` (1422 × 1106 pixels).
-- Final implementation: `/private/tmp/xkcdpass-hero-qa/desktop-final.jpg` (1422 × 1119 full-page pixels).
-- Desktop CSS viewport: 1422 × 1106, device pixel ratio 1, default route, no hover/focus/copy state. The extra 13 pixels are bottom padding. Comparison uses the first 1106 pixels of the rendered capture, without resizing the underlying layout.
-- Combined comparison: `/private/tmp/xkcdpass-hero-qa/comparison-final.png`. Source at left, implementation at right; both shown at 50% scale.
-- Focused terminal comparison: `/private/tmp/xkcdpass-hero-qa/terminal-comparison.png`. Source above, implementation below; native 1:1 crops confirm command, output, titlebar, border, typography, and absent helper caption.
-- Mobile: `/private/tmp/xkcdpass-hero-qa/mobile-top.jpg` and `/private/tmp/xkcdpass-hero-qa/mobile-install.jpg`, 390 × 844 viewport captures at density 1. Captured separately because this browser's full-page capture did not paint content below its viewport reliably.
+- Original visual target: `/Users/tim.vanreenen/.codex/generated_images/01a1ba14-77ce-75a0-abc9-5a6d464ab3a6/exec-f70925b7-465d-4264-a5bd-047621b06831.png`, 1422 × 1106 pixels.
+- Previous implementation: `/private/tmp/xkcdpass-hero-qa/desktop-final.jpg`, 1422 × 1119 pixels.
+- Current implementation: `/private/tmp/xkcdpass-type-spacing/desktop.jpg`, 1422 × 1106 viewport pixels, density 1, default route and neutral interaction state, <http://127.0.0.1:4175/>.
+- Combined before/after: `/private/tmp/xkcdpass-type-spacing/comparison.png`. Previous implementation at left, corrected implementation at right. Previous capture cropped to the same 1106-pixel viewport; both displayed at 50% with no layout rescaling.
+- Focused original/mock terminal and corrected terminal: `/private/tmp/xkcdpass-type-spacing/terminal-comparison.png`. Native-size crops, no stretching; the smaller window is intentional because excess fixed height was removed.
+- Mobile: `/private/tmp/xkcdpass-type-spacing/mobile.jpg` and `mobile-install.jpg`, 390 × 844, density 1. UI readback and production-browser screenshots reviewed; the final subsequent desktop-only terminal scale change does not affect mobile.
 
-## Findings and comparison history
+## Findings, fixes, and comparison history
 
-1. Initial comparison (`comparison-first.png`): [P2] hero actions/terminal began about 24 pixels too low; regenerated art was too tall, pushing installation and footer down. Reduced eyebrow spacing, headline line height, action spacing, illustration width, and installation padding. Second comparison (`comparison-second.png`) confirmed the corrected major-region alignment.
-2. Tablet review: [P2] the sample phrase wrapped. Added a narrower tablet type scale and an assertion that the entire output remains on one line. The new assertion then caught the same issue at 1001 pixels; adjusted desktop output scaling. Final Chromium and WebKit runs pass at 320, 360, 390, 700, 701, 1000, 1001, 1422, and 1920 pixels.
-3. Interaction review: reserved additional space only while clipboard feedback is present, preventing feedback/footer collisions. Rejected-copy behavior and feedback bounds pass the browser test.
-4. Final combined and focused comparisons: no actionable P0/P1/P2 differences remain.
+- [P2, fixed] Disconnected type sizes: 26px buttons/install code, 20px footer, viewport-based custom body/terminal sizes, 750 font weight, and unusually tight headline leading. Replaced with Tailwind's named type utilities and regular/medium/semibold/bold weights. Display headings use normal line height; no fluid font-size formulas remain.
+- [P2, fixed] Crowded text and actions: subtitle margin was 0.6rem, action margin 0.15rem. Established 24px heading-to-body spacing and 32px body-to-actions spacing, with 48px before the terminal and 64px before installation.
+- [P2, fixed] Fragile image positioning and empty terminal: removed 103% image width, negative 9.1rem offset, fixed terminal minimum heights, and separate 700/1000/1440 tweaks. Desktop uses a real grid with the illustration spanning the copy/terminal rows and aligning at the bottom. Smaller widths follow normal document order. The window fits its content.
+- Initial corrected comparison confirmed hierarchy and rhythm at desktop and mobile. Final desktop review retained terminal prominence using standard 30px command and 48px output at the xl breakpoint, while keeping surrounding controls restrained. Responsive/axe tests were rerun in both engines after this adjustment.
+- Final combined/focused review: no actionable P0/P1/P2 findings remain. The original mockup's exact UI sizes and vertical placements are intentionally superseded by the user's correction.
 
 ## Required fidelity surfaces
 
-- **Typography:** self-hosted Geist Variable, bold two-line headline, muted two-line desktop subtitle, larger monospace output, handwritten reaction inside the illustration. Copy is verbatim. Footer uses italic styling. Native monospace metrics vary slightly by OS; an acceptable P3 difference from the image-generated reference.
-- **Spacing/layout:** 1280-pixel maximum content width, sparse header, terminal occupying about 72% of the desktop demonstration row, raised illustration, bottom install strip. Desktop terminal placement/dimensions and installation divider align closely with the mockup. Mobile stacks terminal before art, preserves a two-line headline, and keeps controls reachable.
-- **Colors/tokens:** centralized dark navy, white, muted gray, icy-blue accent, terminal transparency, and titlebar/traffic-light tokens. Generated background is smoother and its blue glow varies slightly from the reference; acceptable P3 variation.
-- **Images:** original generated transparent illustration and separate atmospheric background, stored in `public/assets`. All four objects are recognizable, reaction text is exact, alpha is clean, and aspect ratio is preserved. Black raster ink is inverted to white. Minor differences in hand-drawn contours are acceptable P3 variation. UI arrows/copy/check are Lucide icons.
-- **Content:** exact approved headline/subtitle; exact CLI invocation and sample phrase; no terminal example/comic caption; Homebrew command and footer attribution preserved. The terminal is an example, not an interactive generator.
+- **Typography:** Geist retained. UI/navigation/footer 14px; buttons 14/16px; body 18/20px. Headline uses 36/60/72/96px at standard breakpoints. Terminal command uses 14/20/24/30px; output 16/24/30/48px. All values come from named Tailwind utilities. Native monospace metrics still vary by OS (P3).
+- **Spacing/layout:** shared container and 4px-based Tailwind spacing utilities. Semantic gaps between copy, actions, demonstration, installation, and footer. Terminal no longer reserves unused vertical space. Image has a real grid track. Desktop and mobile controls remain reachable without page overflow.
+- **Colors/tokens:** existing dark navy, white, muted gray, icy-blue, translucent terminal, focus, and traffic-light tokens preserved. Header link hover excludes button anchors so it cannot override primary button contrast.
+- **Images:** exact existing generated background and four-object thought-bubble illustration reused without new drawings, distortion, or crop. Artwork and reaction remain recognizable. Lucide UI icons retained.
+- **Content:** approved headline/subtitle, invocation, four-word output, Homebrew command, and xkcd attribution unchanged. No terminal caption, new sections, or below-the-fold content added.
 
-## Behavior and verification
+## Verification
 
-- In-app Browser available through CUA; no external browser fallback used. Production preview identity, meaningful content, absence of framework overlays, anchor navigation, and actual copy action verified. Copy changed to “Copied” and announced “Install command copied.” No errors from the production preview; earlier development-only font import reload errors were fixed before the final build. Fresh Chromium/WebKit test contexts report no console/runtime errors.
-- `npm run check`: runtime, formatting, Oxlint + shadcn rules, TypeScript, HTML/reference/indexing validation, static build budgets, and all 49 Node tests passed.
-- `npm run test:browser`: 11 passed; one intentionally skipped WebKit clipboard test because that harness does not expose clipboard permissions. Real clipboard success, reset, rejection, and feedback placement verified in Chromium.
-- Browser coverage: keyboard skip link, example/install navigation, no-JavaScript content/navigation, selectable scrolling install command, viewport overflow, unwrapped phrase output, desktop/mobile WCAG A/AA axe scans, CSP hashes/security headers, robots/sitemap, canonical/structured data, true 404, compiled assets, and artifact checksums.
-- `npm audit --audit-level=high`: zero vulnerabilities after removing the on-demand shadcn CLI from installed dependencies. Components and `@shadcn/lint` remain installed.
-- Build output: about 751.5 KiB raw total, 80.4 KiB gzip JavaScript, self-hosted Latin font. Existing exact-commit publication gate retained. No deployment performed.
-
-## Architecture and maintenance
-
-Chose React + Vite compilation with build-time prerendering over introducing a routed application/server framework: this is one marketing page, and Frame/Key already demonstrate the same static pattern. The production artifact remains static and the temporary server bundle is removed. Base UI supplies action semantics; native links share shadcn Button variants. This avoids turning navigation into button semantics. Components define reusable variants rather than per-call visual overrides. Oxlint/shadcn lint checks semantic styling and the shared stylesheet.
-
-The selected assets were produced with built-in ImageGen, using the approved mockup as reference. The illustration prompt requested only the four-object thought bubble, thinking character, exact handwritten reaction, and ground scribble on transparency. The background prompt requested only the smooth midnight navy/cool blue atmosphere, without objects or text. Final assets: `public/assets/passphrase-thought.webp` and `public/assets/hero-background.webp`.
+- `npm run check`: formatting, Oxlint/shadcn lint, TypeScript, source/indexing validation, build budgets, and 49 Node tests passed.
+- Full `npm run test:browser`: 11 passed; one intentional WebKit clipboard permission skip. Final desktop terminal type adjustment followed by a focused Chromium/WebKit responsive, keyboard, and axe rerun: 2 passed.
+- Breakpoints checked at 320, 360, 390, 639, 640, 767, 768, 1023, 1024, 1279, 1280, 1422, and 1920 pixels, including single-line passphrase output. Keyboard scrolling now checks the genuinely overflowing install command at 320px, rather than assuming overflow at 390px after reducing its font size.
+- Browser path: available in-app Browser through CUA. Production preview identity and meaningful content confirmed, no framework overlay, no console errors/warnings. Mobile Install anchor and actual Copy action verified; button changed to Copied and announced Install command copied. Automated clipboard success/rejection and no-JavaScript content remain covered.
+- Final production build passed with strict CSP, public metadata/robots/sitemap, true 404, checksums, and static publication gate intact. No deployment performed.
 
 ## Remaining limits
 
-Manual screen-reader use and physical-device testing were not performed. Small raster/monospace differences above are P3 follow-up polish, not blockers. The prior full site remains at Git commit `891d7b5` for future below-the-fold selection. Screenshots are local review evidence and are not published with the site.
+Manual screen-reader and physical-device checks were not performed. Native monospace glyphs and original generated ink contours retain minor P3 differences from the reference. The earlier site remains in Git for later below-the-fold selection. Local screenshots are review evidence, not public assets.

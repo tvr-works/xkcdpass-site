@@ -11,7 +11,7 @@ const buttonVariants = cva('ui-button', {
     },
     size: {
       default: 'button-default',
-      hero: 'button-hero',
+      lg: 'button-lg',
       icon: 'button-icon',
     },
   },
