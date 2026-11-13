@@ -40,3 +40,11 @@ The user identified nonstandard type sizing and poor whitespace in the initial i
 ## Remaining limits
 
 Manual screen-reader and physical-device checks were not performed. Native monospace glyphs and original generated ink contours retain minor P3 differences from the reference. The earlier site remains in Git for later below-the-fold selection. Local screenshots are review evidence, not public assets.
+
+## Tablet breakpoint follow-up
+
+At the user's request, side-by-side illustration placement now starts at `md` (48rem / 768px). At 768–1023px, the copy spans the full grid width; the terminal and a 192px illustration share the next row with a 24px column gap. At `lg` (1024px), the existing 320px artwork and desktop grid return. Below 768px, the art remains below the terminal. No negative offsets or new type sizes were introduced.
+
+Production-browser evidence: `/private/tmp/xkcdpass-md-layout/tablet-768.jpg`, 768 × 1024 viewport pixels at density 1. The command/output fit, the illustration is beside the terminal, and the install strip remains reachable. In-app Browser logs contained no warnings/errors. Viewport override was reset and preview left open.
+
+Focused Chromium and WebKit responsive/keyboard/axe tests both passed. The existing width loop now also verifies the illustration is beside the terminal from 768px and below it at narrower widths, including 767/768 and 1023/1024 boundaries. Build/typecheck, lint, and formatting passed. Desktop/mobile appearance outside the changed tablet interval is preserved. Final result remains passed.

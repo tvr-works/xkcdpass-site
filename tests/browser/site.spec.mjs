@@ -134,6 +134,15 @@ test('keyboard skip link, responsive layouts, and the hero pass accessibility ch
         ),
       `passphrase wraps at ${width}px`,
     ).toBe(true);
+    const layout = await page.locator('.hero-illustration').evaluate((image) => {
+      const art = image.getBoundingClientRect();
+      const terminal = document.querySelector('.terminal').getBoundingClientRect();
+      return { beside: art.left >= terminal.right, below: art.top >= terminal.bottom };
+    });
+    expect(
+      width >= 768 ? layout.beside : layout.below,
+      `illustration placement at ${width}px`,
+    ).toBe(true);
   }
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
