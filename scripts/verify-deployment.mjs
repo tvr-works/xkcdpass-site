@@ -125,7 +125,6 @@ export async function verifyDeployment({
       'sitemap.xml',
       'assets/hero-background.webp',
       'assets/passphrase-thought.webp',
-      'assets/entropy-annotation.webp',
       'assets/xkcdpass-og.png',
     ];
     for (const file of required) assert.ok(publicFiles.includes(file), `${base}: missing ${file}`);

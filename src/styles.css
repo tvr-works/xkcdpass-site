@@ -302,12 +302,17 @@
   }
 }
 
+/* The continuation uses three standard steps: reading/UI, headings, and the result. */
+@utility continuation-reading {
+  @apply text-lg leading-7;
+}
 @utility ui-toggle-group {
-  @apply inline-flex max-w-full items-center rounded-xl border border-border p-1;
+  @apply grid w-full grid-cols-2 gap-1 rounded-xl border border-border p-1 sm:flex sm:w-auto;
   background: var(--terminal);
 }
 @utility ui-toggle {
-  @apply inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-lg px-2 text-sm font-medium whitespace-nowrap sm:px-6 sm:text-base;
+  @apply inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-lg px-3 font-medium whitespace-nowrap;
+  @apply continuation-reading;
   cursor: pointer;
   &[data-pressed] {
     @apply bg-primary text-primary-foreground;
@@ -320,7 +325,8 @@
   }
 }
 @utility ui-collapsible-trigger {
-  @apply inline-flex min-h-11 items-center gap-2 py-2 text-base text-accent;
+  @apply inline-flex min-h-11 items-center gap-2 py-2 text-accent;
+  @apply continuation-reading;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
@@ -336,122 +342,117 @@
     cursor: default;
   }
 }
+
 @utility ui-collapsible-content {
-  @apply max-w-3xl;
+  @apply min-w-0;
 }
 
 @layer components {
-  .entropy-section {
-    @apply mt-24 scroll-mt-8 sm:mt-32;
+  .entropy-section,
+  .usage-section {
+    @apply mt-24 grid min-w-0 scroll-mt-8 gap-10 sm:mt-32 lg:grid-cols-12 lg:gap-12;
+    @apply continuation-reading;
   }
-  .section-break {
-    @apply hidden lg:block;
+  .continuation-copy {
+    @apply min-w-0 lg:col-span-5;
   }
   .section-title {
-    @apply text-3xl leading-tight font-bold tracking-tight sm:text-4xl lg:text-5xl;
+    @apply text-4xl leading-tight font-bold tracking-tight;
   }
-  .section-intro {
-    @apply mt-6 max-w-4xl text-lg leading-7 text-muted-foreground sm:text-xl sm:leading-8;
+  .section-intro,
+  .entropy-assumptions {
+    @apply mt-6 text-muted-foreground;
   }
-  .section-label {
-    @apply text-xs leading-5 font-medium tracking-widest uppercase sm:text-sm;
+  .entropy-panel {
+    @apply min-w-0 rounded-xl border border-border p-4 sm:p-8 lg:col-span-7;
+    background: var(--terminal);
   }
   .word-count-controls {
-    @apply mt-8 flex flex-wrap items-center gap-4 sm:gap-8;
+    @apply flex flex-wrap items-center justify-between gap-4;
+  }
+  .word-count-label {
+    @apply font-medium;
   }
   .entropy-calculation {
     @apply mt-8;
   }
   .word-choices {
-    @apply mt-6 flex flex-wrap items-center gap-3 sm:gap-4;
+    @apply flex flex-wrap items-center justify-center gap-x-3 gap-y-2 font-mono;
   }
   .word-factor {
-    @apply flex min-w-28 flex-1 items-center gap-3 sm:gap-4;
-  }
-  .multiplication {
-    @apply w-4 shrink-0 text-center text-xl sm:text-2xl;
+    @apply flex items-center gap-3;
   }
   .word-choice {
-    @apply flex min-h-12 flex-1 items-center justify-center rounded-lg border border-border px-3 py-2 font-mono text-lg sm:min-h-16 sm:text-2xl;
-    background: var(--terminal);
-  }
-  .entropy-annotation {
-    @apply mt-4 hidden h-auto w-full sm:block;
-    filter: invert(1);
-  }
-  .entropy-mobile-annotation {
-    @apply mt-6 text-sm leading-6 text-muted-foreground sm:hidden;
-  }
-  .entropy-result {
-    @apply mt-8 text-2xl leading-tight font-semibold tracking-tight text-accent sm:text-3xl lg:text-5xl;
-  }
-  .entropy-summary {
-    @apply mt-2 flex flex-wrap items-center gap-x-8 gap-y-1;
+    @apply whitespace-nowrap;
   }
   .entropy-bits {
-    @apply text-lg leading-7 sm:text-xl;
+    @apply whitespace-nowrap;
   }
-  .entropy-assumptions {
-    @apply mt-6 max-w-5xl text-sm leading-6 text-muted-foreground sm:text-base;
+  .multiplication {
+    @apply text-muted-foreground;
+  }
+  .entropy-result {
+    @apply mt-8 text-center;
+  }
+  .entropy-number {
+    @apply block text-5xl leading-tight font-semibold tracking-tight text-accent;
+  }
+  .entropy-result-label {
+    @apply mt-2 block;
+  }
+  .entropy-summary {
+    @apply mt-6 flex flex-wrap items-center justify-between gap-x-6 gap-y-2;
   }
   .math-explanation {
-    @apply mt-4 flex flex-col gap-4 rounded-xl p-6 text-base leading-7 text-muted-foreground;
-    background: var(--terminal);
+    @apply mt-6 flex flex-col gap-4 text-muted-foreground;
   }
   .math-explanation a {
     @apply inline-flex items-center gap-1 self-start text-accent underline underline-offset-4;
   }
   .math-explanation a svg {
-    @apply size-4;
+    @apply size-4 shrink-0;
   }
   .exact-count {
     overflow-wrap: anywhere;
   }
-  .usage-section {
-    @apply mt-24 scroll-mt-8 sm:mt-32;
-  }
   .flag-reference {
-    @apply mt-8 flex flex-col gap-4 text-base sm:text-lg;
-  }
-  .flag-reference > div {
-    @apply grid grid-cols-1 items-center gap-2 sm:grid-cols-3 sm:gap-8;
-    max-width: 48rem;
-  }
-  .flag-reference dd {
-    @apply col-span-1 grid grid-cols-2 items-center gap-4 sm:col-span-2 sm:gap-8;
+    @apply mt-8 flex flex-col gap-6;
   }
   .flag-reference code {
-    @apply rounded-lg border border-border px-4 py-2 font-mono text-base sm:text-xl;
-    background: var(--terminal);
+    @apply font-mono text-foreground;
   }
-  .flag-reference dd span {
-    @apply text-sm text-muted-foreground sm:text-base;
+  .flag-reference dd {
+    @apply mt-1 text-muted-foreground;
+  }
+  .usage-demo {
+    @apply min-w-0 self-center lg:col-span-7;
   }
   .usage-example {
-    @apply mt-8 flex min-w-0 flex-col gap-2 rounded-xl border border-border p-4 sm:p-6;
+    @apply flex min-w-0 flex-col gap-3 rounded-xl border border-border p-4 sm:p-8;
     background: var(--terminal);
   }
   .usage-example pre {
-    @apply font-mono text-sm leading-6 whitespace-pre-wrap sm:text-lg sm:leading-8 lg:text-xl;
+    @apply font-mono whitespace-pre-wrap;
     overflow-wrap: anywhere;
   }
   .usage-example samp {
-    @apply font-semibold sm:text-xl lg:text-2xl;
+    @apply font-semibold text-accent;
   }
   .usage-note {
-    @apply mt-6 text-sm leading-6 text-muted-foreground sm:text-base;
+    @apply mt-4 text-muted-foreground;
   }
   .platform-links {
-    @apply mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm leading-6 text-accent sm:text-base;
+    @apply mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-accent;
   }
   .platform-links a {
     @apply inline-flex items-center gap-1 underline underline-offset-4;
   }
   .platform-links svg {
-    @apply size-4;
+    @apply size-4 shrink-0;
   }
   .site-footer {
-    @apply mt-20 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 pt-0 sm:mt-24;
+    @apply mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 pt-0 sm:mt-32;
+    @apply continuation-reading;
   }
   .footer-links {
     @apply flex flex-wrap items-center gap-x-6 gap-y-3;
@@ -460,6 +461,6 @@
     @apply inline-flex items-center gap-1 text-accent underline underline-offset-4;
   }
   .footer-links svg {
-    @apply size-4;
+    @apply size-4 shrink-0;
   }
 }

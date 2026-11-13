@@ -88,50 +88,52 @@ function TerminalExample() {
 function UsageSection() {
   return (
     <section className="usage-section" id="usage" aria-labelledby="usage-title">
-      <h2 className="section-title" id="usage-title">
-        Two flags. Your preferred format.
-      </h2>
-      <dl className="flag-reference">
-        <div>
-          <dt>Word count</dt>
-          <dd>
-            <code>--words 6</code>
-            <span>Default: 4</span>
-          </dd>
-        </div>
-        <div>
-          <dt>Separator</dt>
-          <dd>
-            <code>--separator -</code>
-            <span>Default: none</span>
-          </dd>
-        </div>
-      </dl>
-      <div className="usage-example" aria-label="Six-word passphrase example">
-        <pre>
-          <code>
-            <span aria-hidden="true">$ </span>xkcdpass --words 6{' '}
-            <span className="whitespace-nowrap">--separator -</span>
-          </code>
-        </pre>
-        <pre>
-          <samp>turtle-rocket-cactus-donut-ladder-lemon</samp>
-        </pre>
+      <div className="continuation-copy">
+        <h2 className="section-title" id="usage-title">
+          Two flags. Your preferred format.
+        </h2>
+        <dl className="flag-reference">
+          <div>
+            <dt>
+              <code>--words 6</code>
+            </dt>
+            <dd>Word count · default: 4</dd>
+          </div>
+          <div>
+            <dt>
+              <code>--separator -</code>
+            </dt>
+            <dd>Separator · default: none</dd>
+          </div>
+        </dl>
+        <ul className="platform-links" aria-label="Platform support">
+          <li>
+            <a href={`${application}#installation`}>macOS Apple Silicon</a>
+          </li>
+          <li>
+            <a href={`${application}#installation`}>Linux x86_64</a>
+          </li>
+          <li>
+            <a href={`${application}#installation`}>
+              Other platforms <ArrowUpRight aria-hidden="true" />
+            </a>
+          </li>
+        </ul>
       </div>
-      <p className="usage-note">Fixed separators add no entropy.</p>
-      <ul className="platform-links" aria-label="Platform support">
-        <li>
-          <a href={`${application}#installation`}>macOS Apple Silicon</a>
-        </li>
-        <li>
-          <a href={`${application}#installation`}>Linux x86_64</a>
-        </li>
-        <li>
-          <a href={`${application}#installation`}>
-            Other platforms <ArrowUpRight aria-hidden="true" />
-          </a>
-        </li>
-      </ul>
+      <div className="usage-demo">
+        <div className="usage-example" aria-label="Six-word passphrase example">
+          <pre>
+            <code>
+              <span aria-hidden="true">$ </span>xkcdpass --words 6{' '}
+              <span className="whitespace-nowrap">--separator -</span>
+            </code>
+          </pre>
+          <pre>
+            <samp>turtle-rocket-cactus-donut-ladder-lemon</samp>
+          </pre>
+        </div>
+        <p className="usage-note">Fixed separators add no entropy.</p>
+      </div>
     </section>
   );
 }
