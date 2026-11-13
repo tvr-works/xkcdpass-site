@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { mkdir, rm, copyFile, readFile, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
-import { root, sourceFiles, validateSource, validateOutput, repository } from './site.mjs';
+import { mkdir, rm, readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { build } from 'vite';
+import { root, listFiles, validateSource, validateOutput, repository } from './site.mjs';
 
 await validateSource();
 const sha =
@@ -17,15 +18,17 @@ const branch =
     process.env.GITHUB_REF_NAME ||
     execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim());
 assert.ok(branch.trim(), 'A branch identity is required for the static artifact.');
+await build();
+const prerender = resolve(root, '.cache/prerender');
+await mkdir(prerender, { recursive: true });
+await build({ build: { ssr: 'src/entry-server.tsx', outDir: prerender, emptyOutDir: true } });
+const { render } = await import(`${prerender}/entry-server.js`);
 const directory = resolve(root, 'dist');
-await rm(directory, { recursive: true, force: true });
-await Promise.all(
-  sourceFiles.map(async (file) => {
-    await mkdir(dirname(resolve(directory, file)), { recursive: true });
-    await copyFile(resolve(root, file), resolve(directory, file));
-  }),
-);
-const html = await readFile(resolve(directory, 'index.html'), 'utf8');
+let html = await readFile(resolve(directory, 'index.html'), 'utf8');
+assert.ok(html.includes('<div id="root"></div>'));
+html = html.replace('<div id="root"></div>', () => `<div id="root">${render()}</div>`);
+await writeFile(resolve(directory, 'index.html'), html);
+await rm(prerender, { recursive: true });
 const hashes = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gu)]
   .filter((match) => !/\bsrc=/.test(match[0]))
   .map((match) => `'sha256-${createHash('sha256').update(match[1]).digest('base64')}'`);
@@ -36,7 +39,7 @@ await writeFile(
 );
 const files = Object.fromEntries(
   await Promise.all(
-    [...sourceFiles, '_headers'].map(async (file) => [
+    (await listFiles(directory)).map(async (file) => [
       file,
       createHash('sha256')
         .update(await readFile(resolve(directory, file)))

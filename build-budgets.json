@@ -1,7 +1,23 @@
 {
-  "javascript": { "maxRawKiB": 4, "maxGzipKiB": 1.5 },
-  "css": { "maxRawKiB": 16, "maxGzipKiB": 4 },
-  "html": { "maxRawKiB": 24, "maxGzipKiB": 8 },
-  "images": { "maxRawKiB": 320 },
-  "total": { "maxRawKiB": 400 }
+  "javascript": {
+    "maxRawKiB": 300,
+    "maxGzipKiB": 95
+  },
+  "css": {
+    "maxRawKiB": 30,
+    "maxGzipKiB": 8
+  },
+  "html": {
+    "maxRawKiB": 24,
+    "maxGzipKiB": 8
+  },
+  "images": {
+    "maxRawKiB": 500
+  },
+  "total": {
+    "maxRawKiB": 1000
+  },
+  "fonts": {
+    "maxRawKiB": 200
+  }
 }

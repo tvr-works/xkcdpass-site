@@ -89,7 +89,7 @@ export async function verifyDeployment({
     );
     assert.equal(
       links.filter((href) => href === application).length,
-      3,
+      2,
       'Canonical application links',
     );
     assert.ok(links.includes(`${application}/blob/main/LICENSE`), 'Canonical application license');
@@ -99,7 +99,7 @@ export async function verifyDeployment({
     for (const key of ['downloadUrl', 'codeRepository', 'sameAs'])
       assert.equal(applicationData?.[key], application, `Application ${key}`);
     assert.equal(
-      html.match(/<div\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/div>/u)?.[1].trim(),
+      html.match(/<code\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/code>/u)?.[1].trim(),
       'brew install tvr-works/tap/xkcdpass',
       'Organization formula install command',
     );
@@ -116,21 +116,23 @@ export async function verifyDeployment({
     assert.equal(manifest.sha, sha, `${base}: deployed SHA`);
     assert.equal(manifest.repository, repository);
     assert.equal(manifest.branch, expectedBranch, `${base}: deployed branch`);
-    const publicFiles = [
+    const publicFiles = Object.keys(manifest.files).filter((file) => file !== '_headers');
+    const required = [
       'index.html',
-      'main.js',
-      'styles.css',
+      '404.html',
+      '404.css',
       'robots.txt',
       'sitemap.xml',
-      '404.html',
-      'assets/hero-stickman.svg',
-      'assets/icons/lucide-sprite.svg',
+      'assets/hero-background.webp',
+      'assets/passphrase-thought.webp',
       'assets/xkcdpass-og.png',
     ];
-    assert.deepEqual(
-      Object.keys(manifest.files).toSorted(),
-      [...publicFiles, '_headers'].toSorted(),
-    );
+    for (const file of required) assert.ok(publicFiles.includes(file), `${base}: missing ${file}`);
+    for (const file of publicFiles)
+      assert.ok(
+        required.includes(file) || /^assets\/[\w-]+-[\w-]{8,}\.(?:js|css|woff2)$/u.test(file),
+        `Unexpected public file: ${file}`,
+      );
     await Promise.all(
       publicFiles.map(async (path) => {
         const publicPath =

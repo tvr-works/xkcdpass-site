@@ -4,12 +4,11 @@
   "sortPackageJson": false,
   "ignorePatterns": [
     "package-lock.json",
-    "index.html",
-    "styles.css",
-    "main.js",
+    "public/**",
     "assets/**",
-    "robots.txt",
-    "sitemap.xml",
-    "404.html"
+    "dist/**",
+    ".cache/**",
+    "playwright-report/**",
+    "test-results/**"
   ]
 }

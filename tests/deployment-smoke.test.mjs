@@ -1,40 +1,25 @@
 import assert from 'node:assert/strict';
 import { before, test, afterEach, mock } from 'node:test';
-import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { setImmediate } from 'node:timers/promises';
 import { resolve } from 'node:path';
 import { verifyDeployment } from '../scripts/verify-deployment.mjs';
-import { root, origin, outputFiles } from '../scripts/site.mjs';
+import { root, origin, listFiles } from '../scripts/site.mjs';
 
 let files;
 let manifest;
 let headers;
 before(async () => {
-  // Build the actual artifact; response fixtures use its bytes and generated CSP.
-  // CI container ownership must not require Git when the platform supplies identity.
-  const env = {
-    ...process.env,
-    PATH: '',
-    GITHUB_SHA: 'a'.repeat(40),
-    GITHUB_HEAD_REF: '',
-    GITHUB_REF_NAME: 'feature/artifact-contract',
-  };
-  delete env.CF_PAGES_COMMIT_SHA;
-  delete env.CF_PAGES_BRANCH;
-  execFileSync(process.execPath, ['scripts/build-site.mjs'], {
-    cwd: root,
-    stdio: 'pipe',
-    env,
-  });
+  // npm test builds once; fixtures use the actual compiled and prerendered artifact.
+  const outputFiles = await listFiles(resolve(root, 'dist'));
   files = Object.fromEntries(
     await Promise.all(
       outputFiles.map(async (file) => [file, await readFile(resolve(root, 'dist', file))]),
     ),
   );
   manifest = JSON.parse(files['deployment.json']);
-  assert.equal(manifest.branch, 'feature/artifact-contract');
-  assert.equal(manifest.sha, 'a'.repeat(40));
+  assert.ok(manifest.branch);
+  assert.match(manifest.sha, /^[a-f0-9]{40}$/u);
   headers = Object.fromEntries(
     [
       ...files['_headers']

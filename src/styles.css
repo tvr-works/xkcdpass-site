@@ -1,5 +1,11 @@
 @import 'tailwindcss';
-@import '@fontsource-variable/geist';
+@font-face {
+  font-family: 'Geist Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/geist/files/geist-latin-wght-normal.woff2') format('woff2');
+}
 
 @theme inline {
   --font-sans: 'Geist Variable', sans-serif;
@@ -37,11 +43,27 @@
 }
 
 @layer base {
-  body { margin: 0; background: var(--background); color: var(--foreground); }
-  a { color: inherit; text-decoration: none; }
-  button, a { -webkit-tap-highlight-color: transparent; }
-  :focus-visible { outline: 2px solid var(--ring); outline-offset: 6px; }
-  ::selection { background: var(--accent); color: var(--background); }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 6px;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--background);
+  }
 }
 
 @utility ui-button {
@@ -56,29 +78,487 @@
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color 150ms, color 150ms;
-  &:disabled { cursor: default; opacity: 0.5; }
-  & svg { width: 1.15em; height: 1.15em; flex-shrink: 0; }
+  transition:
+    background-color 150ms,
+    color 150ms;
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  & svg {
+    width: 1.15em;
+    height: 1.15em;
+    flex-shrink: 0;
+  }
 }
 @utility button-primary {
   background: var(--primary);
   color: var(--primary-foreground);
   box-shadow: inset 0 0 0 1px #00000012;
-  &:hover { background: var(--accent); }
+  &:hover {
+    background: var(--accent);
+  }
 }
 @utility button-ghost {
   background: transparent;
   color: var(--foreground);
-  &:hover { background: #ffffff12; }
+  &:hover {
+    background: #ffffff12;
+  }
 }
 @utility button-link {
   padding-inline: 0;
   background: transparent;
   color: var(--accent);
   font-weight: 400;
-  &:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
 }
-@utility button-default { min-height: 3rem; padding: 0.6rem 1.65rem; font-size: 1.25rem; }
-@utility button-hero { min-height: 3.875rem; padding: 0.65rem 2.25rem; font-size: 1.625rem; }
-@utility button-icon { width: 3rem; height: 3rem; padding: 0.7rem; border-radius: 0.5rem; }
-@utility ui-separator { height: 1px; width: 100%; background: var(--border); }
+@utility button-default {
+  min-height: 3rem;
+  padding: 0.6rem 1.65rem;
+  font-size: 1.25rem;
+}
+@utility button-hero {
+  min-height: 3.875rem;
+  padding: 0.65rem 2.25rem;
+  font-size: 1.625rem;
+}
+@utility button-icon {
+  width: 3rem;
+  height: 3rem;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+}
+@utility ui-separator {
+  height: 1px;
+  width: 100%;
+  background: var(--border);
+}
+
+@layer components {
+  .page {
+    min-height: 100svh;
+    background: var(--background) url('/assets/hero-background.webp') center top / cover no-repeat;
+  }
+  .shell {
+    width: min(90%, 1280px);
+    margin-inline: auto;
+  }
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-block: 1.3rem;
+  }
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .brand {
+    font-size: 2.5rem;
+    font-weight: 750;
+    letter-spacing: -0.045em;
+    line-height: 1;
+  }
+  .brand-credit {
+    font-size: 1.05rem;
+  }
+  .brand-credit:hover,
+  .site-nav > a:hover {
+    color: var(--accent);
+  }
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    font-size: 1.25rem;
+  }
+  .nav-github {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-github svg {
+    width: 1.25em;
+    height: 1.25em;
+  }
+  .hero {
+    padding-top: 1.25rem;
+  }
+  .eyebrow {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    font-weight: 750;
+    line-height: 0.87;
+    letter-spacing: -0.045em;
+  }
+  .hero-subtitle {
+    margin: 0.6rem 0 0;
+    color: var(--muted-foreground);
+    font-size: clamp(1.1rem, 1.83vw, 1.625rem);
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2.4rem;
+    margin-top: 0.15rem;
+  }
+  .hero-demo {
+    display: grid;
+    grid-template-columns: minmax(0, 2.6fr) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    margin-top: 3.125rem;
+  }
+  .terminal {
+    min-width: 0;
+    min-height: 20.5rem;
+    overflow: hidden;
+    border: 1px solid var(--terminal-border);
+    border-radius: 1.125rem;
+    background: var(--terminal);
+    box-shadow: inset 0 0 0 1px #ffffff0a;
+    backdrop-filter: blur(8px);
+    scroll-margin-top: 2rem;
+  }
+  .terminal-titlebar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.1rem;
+    border-bottom: 1px solid var(--terminal-border);
+    background: var(--terminal-bar);
+  }
+  .terminal-titlebar h2 {
+    margin: 0;
+    font-size: 1.375rem;
+    font-weight: 400;
+  }
+  .terminal-controls {
+    position: absolute;
+    left: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+  .terminal-controls span {
+    width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 50%;
+  }
+  .terminal-close {
+    background: var(--traffic-close);
+  }
+  .terminal-minimize {
+    background: var(--traffic-minimize);
+  }
+  .terminal-maximize {
+    background: var(--traffic-maximize);
+  }
+  .terminal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8rem;
+    padding: 1.65rem;
+  }
+  .terminal pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    line-height: 1.4;
+  }
+  .terminal-command {
+    font-size: clamp(0.875rem, 2.9vw, 2.625rem);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    letter-spacing: -0.03em;
+  }
+  .terminal-output {
+    font-size: clamp(1rem, 3.8vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .hero-illustration {
+    display: block;
+    width: 103%;
+    max-width: none;
+    height: auto;
+    margin-top: -9.1rem;
+    filter: invert(1);
+  }
+  .installation {
+    padding-top: 4.95rem;
+  }
+  .installation:has(.copy-status:not(:empty)) {
+    margin-bottom: 1rem;
+  }
+  .install-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2.7rem;
+    padding-top: 1.6rem;
+    scroll-margin-top: 2rem;
+  }
+  .install-row h2 {
+    margin: 0;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    font-size: 1.125rem;
+    letter-spacing: 0.18em;
+    font-weight: 400;
+  }
+  .install-command {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    width: 44.5rem;
+    border: 1px solid var(--border);
+    border-radius: 0.875rem;
+    background: var(--terminal-bar);
+  }
+  .install-command code {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    padding: 0.45rem 1rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    font-size: 1.625rem;
+    letter-spacing: -0.03em;
+    scrollbar-width: thin;
+  }
+  .install-command code:focus-visible {
+    outline-offset: -3px;
+    border-radius: 0.75rem;
+  }
+  .copy-status {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin: 0.4rem 0 0;
+    color: var(--accent);
+    font-size: 0.875rem;
+  }
+  .site-footer {
+    padding-top: 1.2rem;
+    padding-bottom: 2.5rem;
+    font-size: 1.25rem;
+    font-style: italic;
+    font-synthesis: style;
+  }
+  .site-footer p {
+    margin: 0;
+  }
+  .site-footer a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 1rem;
+    z-index: 10;
+    padding: 0.7rem 1rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-radius: 0.5rem;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+}
+
+@media (min-width: 1440px) {
+  .hero {
+    padding-top: 1.6rem;
+  }
+}
+@media (max-width: 1000px) {
+  .terminal-output {
+    font-size: clamp(1rem, 3.5vw, 2.2rem);
+  }
+  .brand-credit {
+    display: none;
+  }
+  .site-nav {
+    gap: 1.5rem;
+  }
+  .hero-demo {
+    grid-template-columns: minmax(0, 2.5fr) minmax(0, 1fr);
+  }
+  .hero-illustration {
+    width: 100%;
+    margin-top: -3rem;
+  }
+  .terminal {
+    min-height: 15rem;
+  }
+  .terminal-titlebar h2 {
+    font-size: 1rem;
+  }
+  .terminal-controls {
+    gap: 0.45rem;
+    left: 0.8rem;
+  }
+  .terminal-controls span {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+  .terminal-body {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  .installation {
+    padding-top: 3rem;
+  }
+  .install-row {
+    gap: 1.5rem;
+  }
+  .install-command code {
+    font-size: 1.1rem;
+  }
+}
+@media (max-width: 700px) {
+  .shell {
+    width: calc(100% - 2.5rem);
+  }
+  .site-header {
+    gap: 0.75rem;
+    padding-block: 1.25rem;
+  }
+  .brand {
+    font-size: 1.75rem;
+  }
+  .site-nav {
+    gap: 1rem;
+    font-size: 0.95rem;
+  }
+  .nav-example {
+    display: none;
+  }
+  .site-nav .ui-button {
+    min-height: 2.75rem;
+    padding-inline: 1rem;
+    font-size: 1rem;
+  }
+  .hero {
+    padding-top: 2.25rem;
+  }
+  .eyebrow {
+    margin-bottom: 1.5rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 11vw, 4rem);
+    line-height: 0.97;
+  }
+  .hero-subtitle {
+    margin-top: 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+  .desktop-break {
+    display: none;
+  }
+  .hero-actions {
+    align-items: flex-start;
+    gap: 0.6rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .button-hero {
+    min-height: 3.25rem;
+    padding-inline: 1.25rem;
+    font-size: 1.05rem;
+  }
+  .button-link {
+    padding-inline: 0;
+  }
+  .hero-demo {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.25rem;
+    margin-top: 2.5rem;
+  }
+  .terminal {
+    min-height: 11.5rem;
+    border-radius: 0.875rem;
+  }
+  .terminal-titlebar {
+    min-height: 2.5rem;
+  }
+  .terminal-titlebar h2 {
+    font-size: 0.875rem;
+  }
+  .terminal-body {
+    padding: 1.25rem 0.875rem;
+    gap: 1.5rem;
+  }
+  .terminal-command {
+    font-size: clamp(0.75rem, 3.4vw, 1.15rem);
+  }
+  .terminal-output {
+    font-size: clamp(0.9rem, 4.1vw, 1.65rem);
+    letter-spacing: -0.04em;
+  }
+  .hero-illustration {
+    width: min(80%, 20rem);
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  .installation {
+    padding-top: 3.25rem;
+  }
+  .install-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding-top: 1.5rem;
+  }
+  .install-row h2 {
+    font-size: 0.875rem;
+  }
+  .install-command {
+    width: 100%;
+  }
+  .install-command code {
+    font-size: 0.95rem;
+    padding-inline: 0.7rem;
+  }
+  .site-footer {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    padding-block: 2.25rem;
+  }
+}
+@media (max-width: 360px) {
+  .nav-github {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

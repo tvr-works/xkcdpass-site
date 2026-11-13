@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { createHash } from 'node:crypto';
 
-test('loads the static site and all local assets without runtime errors', async ({
+test('renders the approved hero and all compiled assets without runtime errors', async ({
   page,
   request,
 }) => {
@@ -13,58 +13,41 @@ test('loads the static site and all local assets without runtime errors', async 
   });
   await page.goto('/');
   await expect(page).toHaveTitle('xkcdpass | CLI passphrase generator for humans');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Simple passwords, hard to crack.',
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hard to guess.Easy to use.');
+  await expect(page.locator('.hero-subtitle')).toHaveText(
+    'Cryptographically strong passphrases, generated locally in your terminal. Familiar words you can read, retype, and say aloud.',
   );
-  await expect(page.locator('.hero-asset')).toBeVisible();
+  await expect(page.locator('.terminal-command')).toHaveText('$ xkcdpass --words 4 --separator -');
+  await expect(page.locator('.terminal-output')).toHaveText('turtle-rocket-cactus-donut');
+  await expect(page.locator('.hero-illustration')).toBeVisible();
   expect(
-    await page.locator('.hero-asset').evaluate((image) => image.complete && image.naturalWidth > 0),
+    await page
+      .locator('.hero-illustration')
+      .evaluate((image) => image.complete && image.naturalWidth > 0),
   ).toBe(true);
-  for (const path of [
-    '/main.js',
-    '/styles.css',
-    '/assets/hero-stickman.svg',
-    '/assets/icons/lucide-sprite.svg',
-    '/assets/xkcdpass-og.png',
-  ]) {
-    const response = await request.get(path);
+  const manifest = await (await request.get('/deployment.json')).json();
+  for (const path of Object.keys(manifest.files).filter((file) => file.startsWith('assets/'))) {
+    const response = await request.get(`/${path}`);
     expect(response.status()).toBe(200);
     expect(response.headers()['content-type']).not.toContain('text/html');
   }
   expect(errors).toEqual([]);
 });
 
-test('mobile navigation updates state and closes after anchor navigation', async ({ page }) => {
+test('example and install navigation reach their visible targets on desktop and mobile', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.getByRole('link', { name: 'Examples', exact: true }).click();
+  await expect(page).toHaveURL(/#example$/u);
+  await expect(
+    page.getByRole('region', { name: 'Example terminal command and output' }),
+  ).toBeInViewport();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/');
-  const toggle = page.getByRole('button', { name: 'Toggle navigation' });
-  const nav = page.getByRole('navigation', { name: 'Primary' });
-  await expect(nav).toBeHidden();
-  await toggle.focus();
-  await page.keyboard.press('Enter');
-  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-  await expect(nav).toBeVisible();
-  await nav.getByRole('link', { name: 'Install', exact: true }).click();
+  await page.getByRole('link', { name: 'Install', exact: true }).click();
   await expect(page).toHaveURL(/#install$/u);
-  await expect(nav).toBeHidden();
-  await expect(toggle).toHaveAttribute('aria-expanded', 'false');
-});
-
-test('FAQ keyboard controls reveal and hide the associated answers', async ({ page }) => {
-  await page.goto('/');
-  const questions = page.locator('.faq-question');
-  expect(await questions.count()).toBe(6);
-  for (const question of await questions.all()) {
-    const id = await question.getAttribute('aria-controls');
-    const answer = page.locator(`#${id}`);
-    await expect(answer).toBeHidden();
-    await question.focus();
-    await page.keyboard.press('Space');
-    await expect(question).toHaveAttribute('aria-expanded', 'true');
-    await expect(answer).toBeVisible();
-    await page.keyboard.press('Enter');
-    await expect(answer).toBeHidden();
-  }
+  await expect(page.locator('#install-command')).toBeInViewport();
 });
 
 test('copy reports success, restores its label, and reports clipboard rejection', async ({
@@ -91,7 +74,19 @@ test('copy reports success, restores its label, and reports clipboard rejection'
     };
   });
   await button.click();
-  await expect(page.getByRole('button', { name: 'Copy failed' })).toBeVisible();
+  await expect(page.getByRole('status')).toHaveText(
+    'Could not copy. Select the command and copy it manually.',
+  );
+  await expect(button).toBeEnabled();
+  expect(
+    await page
+      .locator('.copy-status')
+      .evaluate(
+        (status) =>
+          status.getBoundingClientRect().bottom <=
+          document.querySelector('.site-footer p').getBoundingClientRect().top,
+      ),
+  ).toBe(true);
 });
 
 test('preserves static content and mobile navigation without JavaScript', async ({ browser }) => {
@@ -112,7 +107,7 @@ test('preserves static content and mobile navigation without JavaScript', async 
   }
 });
 
-test('keyboard skip link, responsive layouts, and expanded content pass accessibility checks', async ({
+test('keyboard skip link, responsive layouts, and the hero pass accessibility checks', async ({
   page,
   browserName,
 }) => {
@@ -123,19 +118,28 @@ test('keyboard skip link, responsive layouts, and expanded content pass accessib
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/#main$/u);
   await expect(page.locator('main')).toBeFocused();
-  for (const width of [320, 390, 760, 761, 980, 981, 1440]) {
+  for (const width of [320, 360, 390, 700, 701, 1000, 1001, 1422, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     expect(
       await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
       `page overflow at ${width}px`,
     ).toBe(true);
+    expect(
+      await page
+        .locator('.terminal-output')
+        .evaluate(
+          (element) =>
+            element.getBoundingClientRect().height <=
+            parseFloat(getComputedStyle(element).lineHeight) + 1,
+        ),
+      `passphrase wraps at ${width}px`,
+    ).toBe(true);
   }
-  for (const question of await page.locator('.faq-question').all()) await question.click();
   const results = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
     .analyze();
   expect(results.violations).toEqual([]);
-  await page.screenshot({ path: test.info().outputPath('expanded-desktop.png'), fullPage: true });
+  await page.screenshot({ path: test.info().outputPath('hero-desktop.png'), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
   const mobile = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
@@ -190,8 +194,8 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     codeRepository: application,
     sameAs: application,
   });
-  await expect(page.locator(`a[href="${application}"]`)).toHaveCount(3);
-  await expect(page.locator('.footer-license-link')).toHaveAttribute(
+  await expect(page.locator(`a[href="${application}"]`)).toHaveCount(2);
+  await expect(page.getByRole('link', { name: 'open source', exact: true })).toHaveAttribute(
     'href',
     `${application}/blob/main/LICENSE`,
   );
