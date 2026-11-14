@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 const origin = 'https://xkcdpass.tvr.works';
 const repository = 'tvr-works/xkcdpass-site';
@@ -116,24 +117,17 @@ export async function verifyDeployment({
     assert.equal(manifest.sha, sha, `${base}: deployed SHA`);
     assert.equal(manifest.repository, repository);
     assert.equal(manifest.branch, expectedBranch, `${base}: deployed branch`);
-    const publicFiles = Object.keys(manifest.files).filter((file) => file !== '_headers');
-    const required = [
-      'index.html',
-      '404.html',
-      '404.css',
-      'robots.txt',
-      'sitemap.xml',
-      'assets/passphrase-thought.webp',
-      'assets/xkcdpass-og.png',
-    ];
-    for (const file of required) assert.ok(publicFiles.includes(file), `${base}: missing ${file}`);
-    for (const file of publicFiles)
+    const manifestFiles = Object.keys(manifest.files).filter((file) => file !== '_headers');
+    const required = ['index.html', ...publicFiles];
+    for (const file of required)
+      assert.ok(manifestFiles.includes(file), `${base}: missing ${file}`);
+    for (const file of manifestFiles)
       assert.ok(
-        required.includes(file) || /^assets\/[\w-]+-[\w-]{8,}\.(?:js|css|woff2)$/u.test(file),
+        required.includes(file) || compiledAssetPattern.test(file),
         `Unexpected public file: ${file}`,
       );
     await Promise.all(
-      publicFiles.map(async (path) => {
+      manifestFiles.map(async (path) => {
         const publicPath =
           path === 'index.html'
             ? '/'

@@ -5,19 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { parse, parseFragment } from 'parse5';
 import budgets from '../build-budgets.json' with { type: 'json' };
+import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const origin = 'https://xkcdpass.tvr.works';
 export const repository = 'tvr-works/xkcdpass-site';
-export const publicFiles = [
-  'robots.txt',
-  'sitemap.xml',
-  '404.html',
-  '404.css',
-  'assets/passphrase-thought.webp',
-  'assets/xkcdpass-og.png',
-];
-const compiledAsset = /^assets\/[\w-]+-[\w-]{8,}\.(?:js|css|woff2)$/u;
 
 export async function listFiles(directory) {
   const files = [];
@@ -134,7 +126,7 @@ export async function validateOutput(directory) {
   for (const file of files)
     assert.ok(
       ['index.html', '_headers', 'deployment.json', ...publicFiles].includes(file) ||
-        compiledAsset.test(file),
+        compiledAssetPattern.test(file),
       `Only allowlisted public files may be published: ${file}`,
     );
   for (const file of ['index.html', '_headers', 'deployment.json', ...publicFiles])
