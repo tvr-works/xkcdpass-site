@@ -155,8 +155,8 @@
     @apply flex flex-col items-start;
   }
   .eyebrow {
-    @apply mb-6 tracking-widest text-accent uppercase;
-    @apply metadata-text;
+    @apply mb-6 text-accent;
+    @apply reading-text;
   }
   .hero h1 {
     @apply text-4xl leading-none font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl;

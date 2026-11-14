@@ -358,9 +358,9 @@ test('page keeps shared type and spacing roles across responsive layouts', async
       return {
         headings: sizes('.section-title'),
         reading: sizes(
-          '.hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
+          '.eyebrow, .hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
         ),
-        metadata: sizes('.eyebrow, .terminal-titlebar h2, .brand-credit'),
+        metadata: sizes('.terminal-titlebar h2, .brand-credit'),
         actions: sizes('.site-nav, .hero-actions a, .site-nav .ui-button'),
         result: sizes('.entropy-number'),
       };

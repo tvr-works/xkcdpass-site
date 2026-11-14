@@ -179,7 +179,7 @@ export default function App() {
       <main className="shell" id="main" tabIndex={-1}>
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-copy">
-            <p className="eyebrow">Open source / Command line</p>
+            <p className="eyebrow">Command-line passphrase generator</p>
             <h1 id="hero-title">
               Hard to guess.
               <br />
