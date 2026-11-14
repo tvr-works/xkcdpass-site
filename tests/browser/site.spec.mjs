@@ -154,6 +154,45 @@ test('copy reports success, restores its label, and reports clipboard rejection'
   }
 });
 
+test('only the latest clipboard request owns feedback and its reset timer', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-01-01T00:00:00Z') });
+  await page.goto('/');
+  const button = page.getByRole('button', { name: 'Copy install command', exact: true });
+  await expect(button).toBeVisible();
+  await page.clock.pauseAt('2026-01-01T00:01:00Z');
+  await page.evaluate(() => {
+    window.pendingCopies = [];
+    navigator.clipboard.writeText = () =>
+      new Promise((resolve, reject) => {
+        window.pendingCopies.push({ resolve, reject });
+      });
+  });
+
+  // Keep both actual click handlers pending, then complete them a second apart.
+  await button.click({ force: true });
+  await button.click({ force: true });
+  expect(await page.evaluate(() => window.pendingCopies.length)).toBe(2);
+  await page.evaluate(() => window.pendingCopies[0].resolve());
+  await page.clock.fastForward(1000);
+  await page.evaluate(() => window.pendingCopies[1].resolve());
+  await expect(page.locator('.copy-status')).toHaveText('Install command copied.');
+  await page.clock.fastForward(1500);
+  await expect(page.locator('.copy-status')).toHaveText('Install command copied.');
+  await page.clock.fastForward(1000);
+  await expect(page.locator('.copy-status')).toBeEmpty();
+
+  // A late success from an older request must not overwrite the latest failure.
+  await button.click({ force: true });
+  await button.click({ force: true });
+  await page.evaluate(() => window.pendingCopies[3].reject(new Error('Clipboard denied')));
+  await expect(page.locator('.copy-status')).toContainText('Could not copy.');
+  await page.evaluate(() => window.pendingCopies[2].resolve());
+  await page.clock.fastForward(1000);
+  await expect(page.locator('.copy-status')).toContainText('Could not copy.');
+  await page.clock.fastForward(1500);
+  await expect(page.locator('.copy-status')).toBeEmpty();
+});
+
 test('preserves static content and mobile navigation without JavaScript', async ({ browser }) => {
   const context = await browser.newContext({
     javaScriptEnabled: false,

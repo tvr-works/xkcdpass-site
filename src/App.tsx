@@ -1,92 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Check, Copy } from 'lucide-react';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { ArrowUpRight } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
 import { EntropyExplorer } from '@/components/entropy-explorer';
-import { useHydrated } from '@/lib/use-hydrated';
+import { InstallationSection } from '@/components/installation-section';
 
 const application = 'https://github.com/tvr-works/xkcdpass';
-const installCommand = 'brew install tvr-works/tap/xkcdpass';
-
-function InstallCommand() {
-  const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
-  const ready = useHydrated();
-  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (resetTimer.current) clearTimeout(resetTimer.current);
-    };
-  }, []);
-
-  async function copyCommand() {
-    if (resetTimer.current) clearTimeout(resetTimer.current);
-    try {
-      await navigator.clipboard.writeText(installCommand);
-      setStatus('copied');
-    } catch {
-      setStatus('error');
-    }
-    resetTimer.current = setTimeout(() => setStatus('idle'), 2500);
-  }
-
-  return (
-    <div className="install-row">
-      <div className="install-command">
-        {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- The scrolling command must be keyboard accessible. */}
-        <code id="install-command" tabIndex={0} aria-label="Homebrew install command">
-          {installCommand}
-        </code>
-        {ready ? (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={copyCommand}
-            aria-label={status === 'copied' ? 'Copied' : 'Copy install command'}
-          >
-            {status === 'copied' ? <Check /> : <Copy />}
-          </Button>
-        ) : null}
-      </div>
-      <output className="copy-status" aria-live="polite">
-        {status === 'copied'
-          ? 'Install command copied.'
-          : status === 'error'
-            ? 'Could not copy. Select the command and copy it manually.'
-            : ''}
-      </output>
-    </div>
-  );
-}
-
-function InstallationSection() {
-  return (
-    <section className="installation" id="install" aria-labelledby="install-title">
-      <div className="continuation-copy">
-        <h2 className="section-title" id="install-title">
-          Install xkcdpass.
-        </h2>
-        <p className="section-intro">Install with Homebrew, or choose a build for your platform.</p>
-      </div>
-      <div className="installation-options">
-        <InstallCommand />
-        <ul className="platform-links" aria-label="Platform support">
-          <li>
-            <a href={`${application}#installation`}>macOS Apple Silicon</a>
-          </li>
-          <li>
-            <a href={`${application}#installation`}>Linux x86_64</a>
-          </li>
-          <li>
-            <a href={`${application}#installation`}>
-              Other platforms <ArrowUpRight aria-hidden="true" />
-            </a>
-          </li>
-        </ul>
-      </div>
-    </section>
-  );
-}
-
 function TerminalExample() {
   return (
     <section className="terminal" id="example" aria-label="Example terminal command and output">
@@ -210,7 +127,7 @@ export default function App() {
         </section>
         <EntropyExplorer />
         <UsageSection />
-        <InstallationSection />
+        <InstallationSection repositoryUrl={application} />
       </main>
       <footer className="site-footer shell">
         <p>
