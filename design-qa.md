@@ -1,10 +1,22 @@
-# Whole-page spacing and typography QA
+# Page layout and responsive QA
 
 final result: passed
 
 The approved two-column continuation is implemented with a shared, standard type scale: 36px section headings, 18px reading/UI/code text, and 48px numerical results. These sizes apply at mobile and desktop widths. All explanatory detail, exact calculations, security assumptions, interactive counts, and the math disclosure are retained.
 
-## Final whole-page pass
+## Installation and footer revision
+
+The latest user-approved structure is hero → entropy → usage → installation → footer. The installation strip and divider below the hero are removed. A dedicated installation section after usage reuses the existing section grid, 36px heading, 18px reading/code, copy command, and 96/128px spacing. Platform links are grouped beneath the command, and no longer appear in usage. Header and hero install anchors point to the complete section.
+
+The footer now contains only “Inspired by xkcd #936.” (the comic reference is linked) and the TVR Works link. The separate GitHub, Original comic, and Open source footer links are removed as requested. Deployment smoke coverage now checks the original comic attribution instead of requiring the removed license link; canonical application/download and security checks remain.
+
+Current evidence: `/private/tmp/xkcdpass-install-section/desktop-install.jpg` (1440 × 1000), `mobile-install.jpg` (390 × 844), `narrow-install.jpg` (320 × 844), and `hero-transition.jpg` (1440 × 1000), all at density 1 in the in-app Browser. Each was inspected. Default four words, math closed. The desktop view shows usage, installation, and the simplified footer; mobile views show the grouped command/platform links and wrapping at narrow widths. The hero capture confirms the whitespace transition without a divider or install strip. No actionable P0/P1/P2 findings remain.
+
+Verification: `npm run check` passed all 54 Node tests and static/lint/type/build checks. Full Chromium/WebKit suite: 15 passed, one expected clipboard-permission skip. Checks cover desktop/mobile install anchor destinations, section order, platform-link placement, absent divider, two-link footer, responsive overflow, shared type/padding, keyboard and axe, no-JavaScript content, clipboard success/failure, and copy feedback contained above the footer. No in-app console warnings/errors. Local preview remains open at `#install`, with temporary viewport overrides reset. Physical-device and manual screen-reader testing remain unverified.
+
+The records below describe earlier iterations and their evidence.
+
+## Earlier whole-page pass
 
 The latest pass covers header, hero, terminal, install strip, lesson, usage, and footer on desktop, tablet, and mobile. The accepted layout, content, illustration breakpoint, and illustration height remain intact.
 

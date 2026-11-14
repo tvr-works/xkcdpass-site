@@ -47,6 +47,22 @@ test('example and install navigation reach their visible targets on desktop and 
   await expect(
     page.getByRole('heading', { name: 'Two flags. Your preferred format.', exact: true }),
   ).toBeInViewport();
+  await page.getByRole('link', { name: 'Install xkcdpass', exact: true }).click();
+  await expect(page).toHaveURL(/#install$/u);
+  await expect(
+    page.getByRole('heading', { name: 'Install xkcdpass.', exact: true }),
+  ).toBeInViewport();
+  await expect(page.locator('#install .platform-links a')).toHaveCount(3);
+  await expect(page.locator('#usage .platform-links')).toHaveCount(0);
+  await expect(page.locator('[data-slot="separator"]')).toHaveCount(0);
+  expect(
+    await page.evaluate(() => {
+      const usage = document.querySelector('#usage').getBoundingClientRect();
+      const install = document.querySelector('#install').getBoundingClientRect();
+      const footer = document.querySelector('.site-footer').getBoundingClientRect();
+      return install.top >= usage.bottom && footer.top >= install.bottom;
+    }),
+  ).toBe(true);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('link', { name: 'Install', exact: true }).click();
   await expect(page).toHaveURL(/#install$/u);
@@ -97,15 +113,15 @@ test('copy reports success, restores its label, and reports clipboard rejection'
     const feedback = await page.evaluate(() => {
       const status = document.querySelector('.copy-status').getBoundingClientRect();
       const install = document.querySelector('.installation').getBoundingClientRect();
-      const lesson = document.querySelector('#strength');
+      const footer = document.querySelector('.site-footer');
       return {
         contained: status.bottom <= install.bottom,
-        sectionGap: lesson.getBoundingClientRect().top - install.bottom,
-        expectedGap: parseFloat(getComputedStyle(lesson).marginTop),
+        sectionGap: footer.getBoundingClientRect().top - install.bottom,
+        expectedGap: parseFloat(getComputedStyle(footer).marginTop),
       };
     });
     expect(feedback.contained, `copy feedback stays in flow at ${width}px`).toBe(true);
-    expect(feedback.sectionGap, `lesson spacing after feedback at ${width}px`).toBeCloseTo(
+    expect(feedback.sectionGap, `footer spacing after feedback at ${width}px`).toBeCloseTo(
       feedback.expectedGap,
       0,
     );
@@ -240,10 +256,12 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     sameAs: application,
   });
   await expect(page.locator(`a[href="${application}"]`)).toHaveCount(2);
-  await expect(page.getByRole('link', { name: 'Open source', exact: true })).toHaveAttribute(
+  await expect(page.getByRole('link', { name: 'xkcd #936', exact: true })).toHaveAttribute(
     'href',
-    `${application}/blob/main/LICENSE`,
+    'https://xkcd.com/936/',
   );
+  await expect(page.locator('.site-footer a')).toHaveCount(2);
+  await expect(page.locator('.site-footer nav')).toHaveCount(0);
   expect(html).not.toContain('github.com/tvanreenen/xkcdpass');
   expect(html).not.toContain('tvanreenen/tap');
   const robots = await request.get('/robots.txt');
@@ -349,7 +367,7 @@ test('page keeps shared type and spacing roles across responsive layouts', async
         reading: sizes(
           '.hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
         ),
-        metadata: sizes('.eyebrow, .install-row h2, .terminal-titlebar h2, .brand-credit'),
+        metadata: sizes('.eyebrow, .terminal-titlebar h2, .brand-credit'),
         actions: sizes('.site-nav, .hero-actions a, .site-nav .ui-button'),
         result: sizes('.entropy-number'),
       };
