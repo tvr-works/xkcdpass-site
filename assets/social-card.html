@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>xkcdpass social card source</title>
+    <style>
+      @font-face {
+        font-family: Geist;
+        src: url('../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2');
+        font-weight: 100 900;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        margin: 0;
+        padding: 48px 56px;
+        overflow: hidden;
+        background: radial-gradient(ellipse at 40% 45%, #0a284b, transparent 70%), #030e21;
+        color: #f8f9fc;
+        font-family: Geist, sans-serif;
+      }
+      header {
+        display: flex;
+        align-items: baseline;
+        gap: 26px;
+      }
+      .brand {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -1px;
+      }
+      .descriptor {
+        margin: 0;
+        color: #a9d9ed;
+        font-size: 24px;
+      }
+      h1 {
+        margin: 64px 0 48px;
+        font-size: 88px;
+        line-height: 1.04;
+        font-weight: 700;
+        letter-spacing: -3px;
+      }
+      .terminal {
+        position: relative;
+        width: 730px;
+        padding: 38px 30px 24px;
+        border: 1px solid #8391a6;
+        border-radius: 14px;
+        background: #ffffff08;
+      }
+      .controls {
+        position: absolute;
+        top: 15px;
+        left: 30px;
+        display: flex;
+        gap: 7px;
+      }
+      .controls i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #8391a6;
+      }
+      pre {
+        margin: 0;
+        font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+      }
+      .command {
+        color: #bec9d8;
+        font-size: 28px;
+        line-height: 36px;
+      }
+      .output {
+        margin-top: 10px;
+        color: #a9d9ed;
+        font-size: 44px;
+        font-weight: 600;
+        line-height: 53px;
+      }
+      .illustration {
+        position: absolute;
+        top: 108px;
+        right: 56px;
+        width: 310px;
+        height: auto;
+        filter: invert(1);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="brand">xkcdpass</p>
+      <p class="descriptor">CLI passphrase generator</p>
+    </header>
+    <h1>Easy to use.<br />Hard to guess.</h1>
+    <div class="terminal">
+      <span class="controls"><i></i><i></i><i></i></span>
+      <pre class="command">$ xkcdpass</pre>
+      <pre class="output">turtlerocketcactusdonut</pre>
+    </div>
+    <img
+      class="illustration"
+      src="../public/assets/passphrase-thought.webp"
+      width="962"
+      height="1363"
+      alt="A stick figure imagines a turtle, rocket, cactus, and donut: ‘I can type that.’"
+    />
+  </body>
+</html>

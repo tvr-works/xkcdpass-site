@@ -1,12 +1,45 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "categories": { "correctness": "error", "suspicious": "error", "perf": "error" },
-  "env": { "browser": true, "node": true },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
   "overrides": [
     {
       "files": ["tests/**", "scripts/verify-deployment.mjs"],
-      "rules": { "eslint/no-await-in-loop": "off" }
+      "rules": {
+        "eslint/no-await-in-loop": "off"
+      }
     }
   ],
-  "ignorePatterns": ["dist/**", "node_modules/**", "playwright-report/**", "test-results/**"]
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**",
+    "playwright-report/**",
+    "test-results/**",
+    ".cache/**"
+  ],
+  "plugins": ["typescript", "react", "jsx-a11y"],
+  "jsPlugins": ["@shadcn/lint"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": ["layout"]
+      }
+    ],
+    "shadcn/no-raw-colors": "error",
+    "shadcn/no-arbitrary-values": "error",
+    "shadcn/no-inline-styles": "error",
+    "shadcn/no-unknown-classes": "error",
+    "shadcn/require-static-classes": "error",
+    "react/react-in-jsx-scope": "off"
+  }
 }

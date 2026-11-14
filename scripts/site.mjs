@@ -1,71 +1,80 @@
 import assert from 'node:assert/strict';
-import { readFile, readdir, lstat } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { extname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { parse, parseFragment } from 'parse5';
 import budgets from '../build-budgets.json' with { type: 'json' };
+import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const origin = 'https://xkcdpass.tvr.works';
 export const repository = 'tvr-works/xkcdpass-site';
-export const sourceFiles = [
-  'index.html',
-  'main.js',
-  'styles.css',
-  'robots.txt',
-  'sitemap.xml',
-  '404.html',
-  'assets/hero-stickman.svg',
-  'assets/icons/lucide-sprite.svg',
-  'assets/xkcdpass-og.png',
-];
-export const outputFiles = [...sourceFiles, '_headers', 'deployment.json'];
 
-export function walk(node, visit) {
+export async function listFiles(directory) {
+  const files = [];
+  async function collect(relative = '') {
+    await Promise.all(
+      (await readdir(resolve(directory, relative), { withFileTypes: true })).map(async (entry) => {
+        const path = relative ? `${relative}/${entry.name}` : entry.name;
+        assert.ok(!entry.isSymbolicLink(), `Output symlink is forbidden: ${path}`);
+        if (entry.isDirectory()) await collect(path);
+        else {
+          assert.ok(entry.isFile(), `Unexpected output entry: ${path}`);
+          files.push(path);
+        }
+      }),
+    );
+  }
+  await collect();
+  return files.toSorted();
+}
+
+function walk(node, visit) {
   visit(node);
   for (const child of node.childNodes ?? []) walk(child, visit);
 }
 
-export async function validateSource(directory = root) {
+export async function validateDocuments(directory, files, { source = false } = {}) {
   const documents = new Map();
   await Promise.all(
-    sourceFiles.map(async (file) => {
-      assert.ok(
-        (await lstat(resolve(directory, file))).isFile(),
-        `Expected a regular source file: ${file}`,
-      );
-      if (!['.html', '.svg'].includes(extname(file))) return;
-      const source = await readFile(resolve(directory, file), 'utf8');
-      const errors = [];
-      const document = file.endsWith('.html')
-        ? parse(source, { onParseError: (error) => errors.push(error.code) })
-        : parseFragment(source);
-      assert.deepEqual(errors, [], `${file}: invalid HTML`);
-      const ids = new Set();
-      walk(document, (node) => {
-        const attributes = Object.fromEntries(
-          (node.attrs ?? []).map(({ name, value }) => [name, value]),
-        );
-        if (attributes.id) {
-          assert.ok(!ids.has(attributes.id), `${file}: duplicate id ${attributes.id}`);
-          ids.add(attributes.id);
-        }
-        for (const name of Object.keys(attributes))
-          assert.ok(!name.startsWith('on'), `${file}: inline event handler`);
-        if (node.tagName === 'script' && !attributes.src) {
-          assert.equal(attributes.type, 'application/ld+json', `${file}: unexpected inline script`);
-          JSON.parse(node.childNodes.map((child) => child.value ?? '').join(''));
-        }
-      });
-      documents.set(file, { document, ids });
-    }),
+    files
+      .filter((file) => ['.html', '.svg'].includes(extname(file)))
+      .map(async (file) => {
+        const text = await readFile(resolve(directory, file), 'utf8');
+        const errors = [];
+        const document = file.endsWith('.html')
+          ? parse(text, { onParseError: (error) => errors.push(error.code) })
+          : parseFragment(text);
+        assert.deepEqual(errors, [], `${file}: invalid HTML`);
+        const ids = new Set();
+        walk(document, (node) => {
+          const attributes = Object.fromEntries(
+            (node.attrs ?? []).map(({ name, value }) => [name, value]),
+          );
+          if (attributes.id) {
+            assert.ok(!ids.has(attributes.id), `${file}: duplicate id ${attributes.id}`);
+            ids.add(attributes.id);
+          }
+          for (const name of Object.keys(attributes))
+            assert.ok(!name.startsWith('on'), `${file}: inline event handler`);
+          if (node.tagName === 'script' && !attributes.src) {
+            assert.equal(
+              attributes.type,
+              'application/ld+json',
+              `${file}: unexpected inline script`,
+            );
+            JSON.parse(node.childNodes.map((child) => child.value ?? '').join(''));
+          }
+        });
+        documents.set(file, { document, ids });
+      }),
   );
   for (const [file, { document }] of documents) {
     walk(document, (node) => {
       for (const { name, value } of node.attrs ?? []) {
-        if (!['src', 'href', 'aria-controls', 'data-copy-target'].includes(name)) continue;
-        if (['aria-controls', 'data-copy-target'].includes(name)) {
+        if (!['src', 'href', 'aria-controls'].includes(name)) continue;
+        if (name === 'aria-controls') {
           assert.ok(documents.get(file).ids.has(value), `${file}: missing control target ${value}`);
           continue;
         }
@@ -73,7 +82,11 @@ export async function validateSource(directory = root) {
         assert.ok(['http:', 'https:', 'mailto:'].includes(url.protocol), `${file}: unsafe URL`);
         if (url.origin !== origin) continue;
         const target = decodeURIComponent(url.pathname).replace(/^\//, '') || 'index.html';
-        assert.ok(sourceFiles.includes(target), `${file}: missing public file ${value}`);
+        assert.ok(
+          files.includes(target) ||
+            (source && (target === 'src/main.tsx' || publicFiles.includes(target))),
+          `${file}: missing public file ${value}`,
+        );
         if (url.hash)
           assert.ok(
             documents.get(target)?.ids.has(decodeURIComponent(url.hash.slice(1))),
@@ -91,41 +104,47 @@ export async function validateSource(directory = root) {
     html.includes('content="index,follow,max-image-preview:large"'),
     'Preserve public indexing.',
   );
+}
+
+export async function validateSource() {
+  const files = await listFiles(resolve(root, 'public'));
+  assert.deepEqual(
+    files,
+    publicFiles.toSorted(),
+    'Only declared public assets may be copied by Vite.',
+  );
+  await validateDocuments(root, ['index.html'], { source: true });
   assert.equal(
-    await readFile(resolve(directory, 'robots.txt'), 'utf8'),
+    await readFile(resolve(root, 'public/robots.txt'), 'utf8'),
     `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`,
   );
-  const sitemap = await readFile(resolve(directory, 'sitemap.xml'), 'utf8');
+  const sitemap = await readFile(resolve(root, 'public/sitemap.xml'), 'utf8');
   assert.deepEqual(sitemap.match(/<loc>[^<]+<\/loc>/gu), [`<loc>${origin}/</loc>`]);
 }
 
 export async function validateOutput(directory) {
-  const files = [];
-  async function collect(relative = '') {
-    await Promise.all(
-      (await readdir(resolve(directory, relative), { withFileTypes: true })).map(async (entry) => {
-        const path = relative ? `${relative}/${entry.name}` : entry.name;
-        assert.ok(!entry.isSymbolicLink(), `Output symlink is forbidden: ${path}`);
-        if (entry.isDirectory()) await collect(path);
-        else {
-          assert.ok(entry.isFile(), `Unexpected output entry: ${path}`);
-          files.push(path);
-        }
-      }),
+  const files = await listFiles(directory);
+  for (const file of files)
+    assert.ok(
+      ['index.html', '_headers', 'deployment.json', ...publicFiles].includes(file) ||
+        compiledAssetPattern.test(file),
+      `Only allowlisted public files may be published: ${file}`,
     );
-  }
-  await collect();
+  for (const file of ['index.html', '_headers', 'deployment.json', ...publicFiles])
+    assert.ok(files.includes(file), `Missing public asset: ${file}`);
+  await validateDocuments(directory, files);
+  const manifest = JSON.parse(await readFile(resolve(directory, 'deployment.json'), 'utf8'));
   assert.deepEqual(
-    files.toSorted(),
-    outputFiles.toSorted(),
-    'Only allowlisted public files may be published.',
+    Object.keys(manifest.files).toSorted(),
+    files.filter((file) => file !== 'deployment.json'),
+    'Manifest must cover the complete public artifact.',
   );
-  await validateSource(directory);
   const groups = {
     javascript: ['.js'],
     css: ['.css'],
     html: ['.html'],
-    images: ['.png', '.svg'],
+    images: ['.png', '.svg', '.webp'],
+    fonts: ['.woff2'],
     total: null,
   };
   const sizes = await Promise.all(
@@ -139,7 +158,10 @@ export async function validateOutput(directory) {
     assert.ok(selected.length, `Missing ${name} assets`);
     const raw = selected.reduce((sum, file) => sum + file.raw, 0);
     const gzip = selected.reduce((sum, file) => sum + file.gzip, 0);
-    assert.ok(raw <= budgets[name].maxRawKiB * 1024, `${name}: raw asset budget exceeded`);
+    assert.ok(
+      raw <= budgets[name].maxRawKiB * 1024,
+      `${name}: raw asset budget exceeded (${(raw / 1024).toFixed(1)} KiB)`,
+    );
     if (budgets[name].maxGzipKiB)
       assert.ok(gzip <= budgets[name].maxGzipKiB * 1024, `${name}: gzip budget exceeded`);
     console.log(

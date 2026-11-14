@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 const origin = 'https://xkcdpass.tvr.works';
 const repository = 'tvr-works/xkcdpass-site';
-const application = 'https://github.com/tvr-works/xkcdpass';
+const applicationRepositoryUrl = 'https://github.com/tvr-works/xkcdpass';
 async function get(base, path) {
   return fetch(`${base}${path}`, {
     redirect: 'error',
@@ -41,7 +42,10 @@ export async function verifyDeployment({
       !deployment.port,
   );
   const origins = new Set([deployment.origin]);
-  if (environment === 'production') origins.add(origin);
+  if (environment === 'production') {
+    origins.add(origin);
+    origins.add('https://xkcdpass-site.pages.dev');
+  }
   if (previewAlias) {
     assert.equal(environment, 'preview');
     const alias = new URL(previewAlias);
@@ -88,18 +92,27 @@ export async function verifyDeployment({
       (match) => match[1],
     );
     assert.equal(
-      links.filter((href) => href === application).length,
-      3,
+      links.filter((href) => href === applicationRepositoryUrl).length,
+      2,
       'Canonical application links',
     );
-    assert.ok(links.includes(`${application}/blob/main/LICENSE`), 'Canonical application license');
+    assert.ok(html.includes('href="https://xkcd.com/936/"'), 'Original comic attribution');
     const applicationData = JSON.parse(
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/u)?.[1] ?? 'null',
     );
-    for (const key of ['downloadUrl', 'codeRepository', 'sameAs'])
-      assert.equal(applicationData?.[key], application, `Application ${key}`);
+    assert.equal(applicationData?.sameAs, applicationRepositoryUrl, 'Application sameAs');
     assert.equal(
-      html.match(/<div\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/div>/u)?.[1].trim(),
+      applicationData?.downloadUrl,
+      `${applicationRepositoryUrl}/releases`,
+      'Application downloadUrl',
+    );
+    assert.equal(
+      applicationData?.installUrl,
+      `${applicationRepositoryUrl}#installation`,
+      'Application installUrl',
+    );
+    assert.equal(
+      html.match(/<code\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/code>/u)?.[1].trim(),
       'brew install tvr-works/tap/xkcdpass',
       'Organization formula install command',
     );
@@ -116,23 +129,17 @@ export async function verifyDeployment({
     assert.equal(manifest.sha, sha, `${base}: deployed SHA`);
     assert.equal(manifest.repository, repository);
     assert.equal(manifest.branch, expectedBranch, `${base}: deployed branch`);
-    const publicFiles = [
-      'index.html',
-      'main.js',
-      'styles.css',
-      'robots.txt',
-      'sitemap.xml',
-      '404.html',
-      'assets/hero-stickman.svg',
-      'assets/icons/lucide-sprite.svg',
-      'assets/xkcdpass-og.png',
-    ];
-    assert.deepEqual(
-      Object.keys(manifest.files).toSorted(),
-      [...publicFiles, '_headers'].toSorted(),
-    );
+    const manifestFiles = Object.keys(manifest.files).filter((file) => file !== '_headers');
+    const required = ['index.html', ...publicFiles];
+    for (const file of required)
+      assert.ok(manifestFiles.includes(file), `${base}: missing ${file}`);
+    for (const file of manifestFiles)
+      assert.ok(
+        required.includes(file) || compiledAssetPattern.test(file),
+        `Unexpected public file: ${file}`,
+      );
     await Promise.all(
-      publicFiles.map(async (path) => {
+      manifestFiles.map(async (path) => {
         const publicPath =
           path === 'index.html'
             ? '/'
