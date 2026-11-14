@@ -4,6 +4,14 @@ final result: passed
 
 The approved two-column continuation is implemented with a shared, standard type scale: 36px section headings, 18px reading/UI/code text, and 48px numerical results. These sizes apply at mobile and desktop widths. All explanatory detail, exact calculations, security assumptions, interactive counts, and the math disclosure are retained.
 
+## Continuous background revision
+
+Replaced the repeating raster background with a single fixed CSS radial glow over the existing navy base. The decorative pseudo-element is isolated behind the page content and ignores pointer events. It has no texture or animation, and its viewport sizing is independent of document height, so expanding the lesson does not stretch or repeat a backdrop. Existing foreground, component surfaces, focus rings, layout, and motion preferences remain intact. Removed the unused `hero-background.webp` and its public-artifact/deployment allowlist entries.
+
+Evidence: `/private/tmp/xkcdpass-background/desktop-hero.jpg` and `desktop-install.jpg` (1440 × 1000), plus `mobile-hero.jpg` and `mobile-expanded.jpg` (390 × 844), all density 1 in the in-app Browser and inspected. Six-word selection retained; the math disclosure was opened for inspection and closed afterward. Viewport override reset and preview left open at the hero. No seams, texture repetition, blocked controls, clipping, or console warnings/errors observed. No actionable P0/P1/P2 findings remain.
+
+Verification: `npm run check` passed all 54 Node tests plus format, Oxlint/shadcn lint, TypeScript, document validation, and budgets. Full Chromium/WebKit suite: 17 passed, one expected WebKit clipboard-permission skip. Includes smooth/reduced-motion anchor scrolling, copy success/failure, keyboard controls, disclosure, responsive layouts, axe, no-JavaScript content, asset delivery, and deployment metadata/checksums. Physical-device testing remains unverified. Older background references below are historical records.
+
 ## Hero caption revision
 
 Changed the illustration caption to “I can type that.” and updated its alt text. The built-in imagegen tool generated the replacement lettering; only its caption region was integrated into the existing transparent artwork. Saved asset: `public/assets/passphrase-thought.webp`, lossless WebP, 962 × 1363, 149,520 bytes. A decoded-pixel comparison against the prior committed asset found zero visible changes outside x=500–961, y=680–979. The original turtle, rocket, cactus, donut, thought cloud, figure, ground, alpha, and layout dimensions are retained.

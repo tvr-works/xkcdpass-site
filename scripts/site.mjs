@@ -15,7 +15,6 @@ export const publicFiles = [
   '404.html',
   '404.css',
   'assets/passphrase-thought.webp',
-  'assets/hero-background.webp',
   'assets/xkcdpass-og.png',
 ];
 const compiledAsset = /^assets\/[\w-]+-[\w-]{8,}\.(?:js|css|woff2)$/u;

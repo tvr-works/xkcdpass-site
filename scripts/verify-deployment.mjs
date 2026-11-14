@@ -123,7 +123,6 @@ export async function verifyDeployment({
       '404.css',
       'robots.txt',
       'sitemap.xml',
-      'assets/hero-background.webp',
       'assets/passphrase-thought.webp',
       'assets/xkcdpass-og.png',
     ];
