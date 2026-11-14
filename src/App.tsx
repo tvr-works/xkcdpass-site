@@ -207,7 +207,7 @@ export default function App() {
             src="/assets/passphrase-thought.webp"
             width="962"
             height="1363"
-            alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can pass that along.’"
+            alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can type that.’"
             fetchPriority="high"
           />
         </section>
