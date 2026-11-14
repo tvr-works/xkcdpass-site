@@ -58,7 +58,7 @@ test('social crawlers receive a real PNG whose dimensions and alternative text m
   assert.equal(image.search, '');
   assert.equal(meta('twitter:image'), image.href);
   assert.equal(meta('og:image:alt'), meta('twitter:image:alt'));
-  assert.match(meta('og:image:alt'), /terminal.*turtlerocketcactusdonut.*thought bubble/u);
+  assert.match(meta('og:image:alt'), /terminal.*turtlerocketcactusdonut.*stick figure/u);
   const information = await sharp(resolve(root, 'dist', image.pathname.slice(1))).metadata();
   assert.equal(meta('og:image:type'), `image/${information.format}`);
   assert.equal(Number(meta('og:image:width')), information.width);
