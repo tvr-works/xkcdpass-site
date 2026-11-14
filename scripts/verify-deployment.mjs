@@ -97,8 +97,17 @@ export async function verifyDeployment({
     const applicationData = JSON.parse(
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/u)?.[1] ?? 'null',
     );
-    for (const key of ['downloadUrl', 'codeRepository', 'sameAs'])
-      assert.equal(applicationData?.[key], applicationRepositoryUrl, `Application ${key}`);
+    assert.equal(applicationData?.sameAs, applicationRepositoryUrl, 'Application sameAs');
+    assert.equal(
+      applicationData?.downloadUrl,
+      `${applicationRepositoryUrl}/releases`,
+      'Application downloadUrl',
+    );
+    assert.equal(
+      applicationData?.installUrl,
+      `${applicationRepositoryUrl}#installation`,
+      'Application installUrl',
+    );
     assert.equal(
       html.match(/<code\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/code>/u)?.[1].trim(),
       'brew install tvr-works/tap/xkcdpass',

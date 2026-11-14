@@ -12,7 +12,7 @@ test('renders the approved hero and all compiled assets without runtime errors',
     if (['error', 'warning'].includes(message.type())) errors.push(message.text());
   });
   await page.goto('/');
-  await expect(page).toHaveTitle('xkcdpass | CLI passphrase generator for humans');
+  await expect(page).toHaveTitle('xkcdpass | Command-line passphrase generator');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Easy to use.Hard to guess.');
   await expect(page.locator('.hero-subtitle')).toHaveText(
     'Cryptographically strong passphrases, generated locally in your terminal. Familiar words you can read, retype, and say aloud.',
@@ -312,12 +312,20 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     'content',
     'index,follow,max-image-preview:large',
   );
+  const socialImage = await page.locator('meta[property="og:image"]').getAttribute('content');
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', socialImage);
+  const socialResponse = await request.get(new URL(socialImage).pathname);
+  expect(socialResponse.status()).toBe(200);
+  expect(socialResponse.headers()['content-type']).toBe('image/png');
+  const faviconResponse = await request.get('/favicon.svg');
+  expect(faviconResponse.status()).toBe(200);
+  expect(faviconResponse.headers()['content-type']).toBe('image/svg+xml');
   const application = 'https://github.com/tvr-works/xkcdpass';
   expect(
     JSON.parse(await page.locator('script[type="application/ld+json"]').textContent()),
   ).toMatchObject({
-    downloadUrl: application,
-    codeRepository: application,
+    downloadUrl: `${application}/releases`,
+    installUrl: `${application}#installation`,
     sameAs: application,
   });
   await expect(page.locator(`a[href="${application}"]`)).toHaveCount(2);

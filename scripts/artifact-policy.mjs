@@ -4,8 +4,9 @@ export const publicFiles = [
   'sitemap.xml',
   '404.html',
   '404.css',
+  'favicon.svg',
   'assets/passphrase-thought.webp',
-  'assets/xkcdpass-og.png',
+  'assets/xkcdpass-social.png',
 ];
 
 export const compiledAssetPattern = /^assets\/[\w-]+-[\w-]{8,}\.(?:js|css|woff2)$/u;

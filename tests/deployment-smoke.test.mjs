@@ -108,7 +108,7 @@ for (const [description, overrides, pattern, changeHtml] of [
     /Application downloadUrl/u,
     (html) =>
       html.replace(
-        '"downloadUrl": "https://github.com/tvr-works/xkcdpass"',
+        '"downloadUrl": "https://github.com/tvr-works/xkcdpass/releases"',
         '"downloadUrl": "https://example.com/download"',
       ),
   ],

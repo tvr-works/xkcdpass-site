@@ -83,7 +83,8 @@ export async function validateDocuments(directory, files, { source = false } = {
         if (url.origin !== origin) continue;
         const target = decodeURIComponent(url.pathname).replace(/^\//, '') || 'index.html';
         assert.ok(
-          files.includes(target) || (source && target === 'src/main.tsx'),
+          files.includes(target) ||
+            (source && (target === 'src/main.tsx' || publicFiles.includes(target))),
           `${file}: missing public file ${value}`,
         );
         if (url.hash)

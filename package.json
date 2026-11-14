@@ -16,6 +16,7 @@
     "test": "npm run build && node --test tests/*.test.mjs",
     "check": "npm run check:runtime && npm run format:check && npm run lint && npm run typecheck && npm run validate && npm test",
     "build": "npm run check:runtime && tsc --noEmit && node scripts/build-site.mjs",
+    "generate:social": "node scripts/generate-social-card.mjs",
     "preview": "node scripts/serve-site.mjs",
     "test:browser": "playwright test",
     "ci:gate": "node scripts/wait-for-ci.mjs",
