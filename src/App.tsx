@@ -3,7 +3,8 @@ import { buttonVariants } from '@/components/ui/button';
 import { EntropyExplorer } from '@/components/entropy-explorer';
 import { InstallationSection } from '@/components/installation-section';
 
-const application = 'https://github.com/tvr-works/xkcdpass';
+const applicationRepositoryUrl = 'https://github.com/tvr-works/xkcdpass';
+
 function TerminalExample() {
   return (
     <section className="terminal" id="example" aria-label="Example terminal command and output">
@@ -32,7 +33,7 @@ function TerminalExample() {
 function UsageSection() {
   return (
     <section className="usage-section" id="usage" aria-labelledby="usage-title">
-      <div className="continuation-copy">
+      <div className="section-copy">
         <h2 className="section-title" id="usage-title">
           Choose your format.
         </h2>
@@ -85,7 +86,7 @@ export default function App() {
           </a>
         </div>
         <nav className="site-nav" aria-label="Primary">
-          <a className="nav-github" href={application}>
+          <a className="nav-github" href={applicationRepositoryUrl}>
             GitHub <ArrowUpRight aria-hidden="true" />
           </a>
           <a className={buttonVariants()} href="#install">
@@ -110,7 +111,10 @@ export default function App() {
               <a className={buttonVariants({ size: 'lg' })} href="#install">
                 Install xkcdpass
               </a>
-              <a className={buttonVariants({ variant: 'link', size: 'lg' })} href={application}>
+              <a
+                className={buttonVariants({ variant: 'link', size: 'lg' })}
+                href={applicationRepositoryUrl}
+              >
                 View on GitHub <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
               </a>
             </div>
@@ -127,7 +131,7 @@ export default function App() {
         </section>
         <EntropyExplorer />
         <UsageSection />
-        <InstallationSection repositoryUrl={application} />
+        <InstallationSection repositoryUrl={applicationRepositoryUrl} />
       </main>
       <footer className="site-footer shell">
         <p>

@@ -465,7 +465,7 @@ test('page keeps shared type and spacing roles across responsive layouts', async
     const layout = await page.evaluate(() => {
       const bounds = (selector) => document.querySelector(selector).getBoundingClientRect();
       const panel = bounds('.entropy-panel');
-      const copy = bounds('#strength .continuation-copy');
+      const copy = bounds('#strength .section-copy');
       return {
         beside: panel.left >= copy.right,
         below: panel.top >= copy.bottom,

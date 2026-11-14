@@ -4,7 +4,7 @@ import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 const origin = 'https://xkcdpass.tvr.works';
 const repository = 'tvr-works/xkcdpass-site';
-const application = 'https://github.com/tvr-works/xkcdpass';
+const applicationRepositoryUrl = 'https://github.com/tvr-works/xkcdpass';
 async function get(base, path) {
   return fetch(`${base}${path}`, {
     redirect: 'error',
@@ -89,7 +89,7 @@ export async function verifyDeployment({
       (match) => match[1],
     );
     assert.equal(
-      links.filter((href) => href === application).length,
+      links.filter((href) => href === applicationRepositoryUrl).length,
       2,
       'Canonical application links',
     );
@@ -98,7 +98,7 @@ export async function verifyDeployment({
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/u)?.[1] ?? 'null',
     );
     for (const key of ['downloadUrl', 'codeRepository', 'sameAs'])
-      assert.equal(applicationData?.[key], application, `Application ${key}`);
+      assert.equal(applicationData?.[key], applicationRepositoryUrl, `Application ${key}`);
     assert.equal(
       html.match(/<code\b[^>]*\bid="install-command"[^>]*>([^<]*)<\/code>/u)?.[1].trim(),
       'brew install tvr-works/tap/xkcdpass',

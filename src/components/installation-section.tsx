@@ -7,7 +7,7 @@ const installCommand = 'brew install tvr-works/tap/xkcdpass';
 
 function InstallCommand() {
   const [status, setStatus] = useState<'idle' | 'copied' | 'error'>('idle');
-  const ready = useHydrated();
+  const isHydrated = useHydrated();
   const copyRequest = useRef(0);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -40,7 +40,7 @@ function InstallCommand() {
         <code id="install-command" tabIndex={0} aria-label="Homebrew install command">
           {installCommand}
         </code>
-        {ready ? (
+        {isHydrated ? (
           <Button
             variant="ghost"
             size="icon"
@@ -65,7 +65,7 @@ function InstallCommand() {
 export function InstallationSection({ repositoryUrl }: { repositoryUrl: string }) {
   return (
     <section className="installation" id="install" aria-labelledby="install-title">
-      <div className="continuation-copy">
+      <div className="section-copy">
         <h2 className="section-title" id="install-title">
           Install xkcdpass.
         </h2>

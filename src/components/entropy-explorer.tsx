@@ -15,13 +15,13 @@ const wordPositions = [1, 2, 3, 4, 5, 6];
 
 export function EntropyExplorer() {
   const [wordCount, setWordCount] = useState<WordCount>(4);
-  const ready = useHydrated();
+  const isHydrated = useHydrated();
   const strength = passphraseStrength(wordCount);
   const choices = WORDLIST_SIZE.toLocaleString('en-US');
 
   return (
     <section className="entropy-section" id="strength" aria-labelledby="entropy-title">
-      <div className="continuation-copy">
+      <div className="section-copy">
         <h2 className="section-title" id="entropy-title">
           Why simple words can make strong passwords.
         </h2>
@@ -52,7 +52,7 @@ export function EntropyExplorer() {
           <ToggleGroup
             aria-labelledby="word-count-label"
             value={[String(wordCount)]}
-            disabled={!ready}
+            disabled={!isHydrated}
             onValueChange={(values) => {
               const next = Number(values[0]);
               if (isWordCount(next)) setWordCount(next);
@@ -88,7 +88,7 @@ export function EntropyExplorer() {
             <p className="entropy-bits" aria-hidden="true">
               {strength.bitsLabel} bits of entropy
             </p>
-            <CollapsibleTrigger disabled={!ready}>
+            <CollapsibleTrigger disabled={!isHydrated}>
               How the math works <ChevronDown aria-hidden="true" />
             </CollapsibleTrigger>
           </div>

@@ -115,9 +115,6 @@
 @utility button-icon {
   @apply size-11 p-2;
 }
-@utility ui-separator {
-  @apply h-px w-full bg-border;
-}
 
 @layer components {
   .page {
@@ -368,7 +365,7 @@
     @apply mt-24 grid min-w-0 scroll-mt-8 gap-10 sm:mt-32 lg:grid-cols-12 lg:gap-12;
     @apply reading-text;
   }
-  .continuation-copy {
+  .section-copy {
     @apply min-w-0 lg:col-span-5;
   }
   .section-title {
