@@ -92,7 +92,7 @@ export async function verifyDeployment({
       2,
       'Canonical application links',
     );
-    assert.ok(links.includes(`${application}/blob/main/LICENSE`), 'Canonical application license');
+    assert.ok(html.includes('href="https://xkcd.com/936/"'), 'Original comic attribution');
     const applicationData = JSON.parse(
       html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/u)?.[1] ?? 'null',
     );

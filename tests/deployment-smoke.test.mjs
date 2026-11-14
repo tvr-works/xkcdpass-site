@@ -97,10 +97,10 @@ for (const [description, overrides, pattern, changeHtml] of [
       ),
   ],
   [
-    'incorrect application license',
+    'incorrect comic attribution',
     {},
-    /Canonical application license/u,
-    (html) => html.replace('/blob/main/LICENSE', '/blob/main/COPYING'),
+    /Original comic attribution/u,
+    (html) => html.replace('https://xkcd.com/936/', 'https://xkcd.com/1/'),
   ],
   [
     'incorrect download metadata',

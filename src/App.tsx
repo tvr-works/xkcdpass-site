@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Check, Copy } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { EntropyExplorer } from '@/components/entropy-explorer';
 import { useHydrated } from '@/lib/use-hydrated';
 
@@ -31,8 +30,7 @@ function InstallCommand() {
   }
 
   return (
-    <div className="install-row" id="install">
-      <h2>Make it yours</h2>
+    <div className="install-row">
       <div className="install-command">
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- The scrolling command must be keyboard accessible. */}
         <code id="install-command" tabIndex={0} aria-label="Homebrew install command">
@@ -57,6 +55,35 @@ function InstallCommand() {
             : ''}
       </output>
     </div>
+  );
+}
+
+function InstallationSection() {
+  return (
+    <section className="installation" id="install" aria-labelledby="install-title">
+      <div className="continuation-copy">
+        <h2 className="section-title" id="install-title">
+          Install xkcdpass.
+        </h2>
+        <p className="section-intro">Install with Homebrew, or choose a build for your platform.</p>
+      </div>
+      <div className="installation-options">
+        <InstallCommand />
+        <ul className="platform-links" aria-label="Platform support">
+          <li>
+            <a href={`${application}#installation`}>macOS Apple Silicon</a>
+          </li>
+          <li>
+            <a href={`${application}#installation`}>Linux x86_64</a>
+          </li>
+          <li>
+            <a href={`${application}#installation`}>
+              Other platforms <ArrowUpRight aria-hidden="true" />
+            </a>
+          </li>
+        </ul>
+      </div>
+    </section>
   );
 }
 
@@ -106,19 +133,6 @@ function UsageSection() {
             <dd>Separator · default: none</dd>
           </div>
         </dl>
-        <ul className="platform-links" aria-label="Platform support">
-          <li>
-            <a href={`${application}#installation`}>macOS Apple Silicon</a>
-          </li>
-          <li>
-            <a href={`${application}#installation`}>Linux x86_64</a>
-          </li>
-          <li>
-            <a href={`${application}#installation`}>
-              Other platforms <ArrowUpRight aria-hidden="true" />
-            </a>
-          </li>
-        </ul>
       </div>
       <div className="usage-demo">
         <div className="usage-example" aria-label="Six-word passphrase example">
@@ -197,24 +211,14 @@ export default function App() {
             fetchPriority="high"
           />
         </section>
-        <section className="installation" aria-label="Install xkcdpass">
-          <Separator />
-          <InstallCommand />
-        </section>
         <EntropyExplorer />
         <UsageSection />
+        <InstallationSection />
       </main>
       <footer className="site-footer shell">
-        <p>Inspired by xkcd #936.</p>
-        <nav className="footer-links" aria-label="Project links">
-          <a href={`${application}#readme`}>
-            GitHub <ArrowUpRight aria-hidden="true" />
-          </a>
-          <a href="https://xkcd.com/936/">
-            Original comic <ArrowUpRight aria-hidden="true" />
-          </a>
-          <a href={`${application}/blob/main/LICENSE`}>Open source</a>
-        </nav>
+        <p>
+          Inspired by <a href="https://xkcd.com/936/">xkcd #936</a>.
+        </p>
         <a href="https://tvr.works/software">by TVR Works</a>
       </footer>
     </div>
