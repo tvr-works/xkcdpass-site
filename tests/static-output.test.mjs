@@ -26,6 +26,17 @@ test('an accidental development file cannot be published', async (t) => {
   await writeFile(resolve(directory, 'package.json'), '{}');
   await assert.rejects(validateOutput(directory), /Only allowlisted public files/u);
 });
+test('development-only class names are excluded from compiled CSS', async (t) => {
+  const directory = await fixture(t);
+  const css = (await listFiles(directory)).find(
+    (file) => file.startsWith('assets/') && file.endsWith('.css'),
+  );
+  // This literal deliberately lives outside the application sources.
+  const developmentOnlyClass = 'bg-fuchsia-950';
+  assert.ok(
+    !(await readFile(resolve(directory, css), 'utf8')).includes(`.${developmentOnlyClass}`),
+  );
+});
 test('a missing illustration blocks packaging', async (t) => {
   const directory = await fixture(t);
   await rm(resolve(directory, 'assets/passphrase-thought.webp'));
