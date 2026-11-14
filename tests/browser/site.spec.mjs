@@ -62,6 +62,39 @@ test('install navigation reaches its visible target on desktop and mobile', asyn
   await expect(page.locator('#install-command')).toBeInViewport();
 });
 
+test('install anchors scroll smoothly unless reduced motion is requested', async ({ page }) => {
+  for (const reducedMotion of ['no-preference', 'reduce']) {
+    await page.emulateMedia({ reducedMotion });
+    await page.goto('/');
+    const destination = await page.evaluate(() => {
+      const target = document.querySelector('#install');
+      const top = target.getBoundingClientRect().top + scrollY;
+      window.installScrollSamples = [];
+      addEventListener('scroll', () => window.installScrollSamples.push(scrollY), {
+        passive: true,
+      });
+      return Math.min(
+        top - parseFloat(getComputedStyle(target).scrollMarginTop),
+        document.documentElement.scrollHeight - innerHeight,
+      );
+    });
+    expect(
+      await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior),
+    ).toBe(reducedMotion === 'reduce' ? 'auto' : 'smooth');
+    await page.getByRole('link', { name: 'Install', exact: true }).click();
+    await expect(page).toHaveURL(/#install$/u);
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeCloseTo(destination, 0);
+    await expect(page.locator('#install-command')).toBeInViewport();
+    const intermediateScroll = await page.evaluate(
+      (end) => window.installScrollSamples.some((position) => position > 0 && position < end - 1),
+      destination,
+    );
+    expect(intermediateScroll, `intermediate scroll positions with ${reducedMotion}`).toBe(
+      reducedMotion === 'no-preference',
+    );
+  }
+});
+
 test('copy reports success, restores its label, and reports clipboard rejection', async ({
   page,
   browserName,
