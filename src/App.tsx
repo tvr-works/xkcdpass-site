@@ -117,7 +117,7 @@ function UsageSection() {
     <section className="usage-section" id="usage" aria-labelledby="usage-title">
       <div className="continuation-copy">
         <h2 className="section-title" id="usage-title">
-          Two flags. Your preferred format.
+          Choose your format.
         </h2>
         <dl className="flag-reference">
           <div>
