@@ -98,7 +98,7 @@
   }
 }
 @utility button-default {
-  @apply h-10 px-4 text-sm;
+  @apply h-11 px-4 text-base;
 }
 @utility button-lg {
   @apply h-12 text-base;
@@ -107,7 +107,7 @@
   }
 }
 @utility button-icon {
-  @apply size-10 p-2;
+  @apply size-11 p-2;
 }
 @utility ui-separator {
   @apply h-px w-full bg-border;
@@ -132,14 +132,15 @@
     @apply text-2xl leading-none font-bold tracking-tight;
   }
   .brand-credit {
-    @apply hidden text-sm text-muted-foreground lg:block;
+    @apply hidden text-muted-foreground lg:block;
+    @apply metadata-text;
   }
   .brand-credit:hover,
   .site-nav > a:not(.ui-button):hover {
     color: var(--accent);
   }
   .site-nav {
-    @apply flex items-center gap-6 text-sm;
+    @apply flex items-center gap-6 text-base leading-6;
   }
   .nav-example {
     @apply hidden md:block;
@@ -157,13 +158,15 @@
     @apply flex flex-col items-start;
   }
   .eyebrow {
-    @apply mb-6 text-xs leading-4 tracking-widest text-accent uppercase;
+    @apply mb-6 tracking-widest text-accent uppercase;
+    @apply metadata-text;
   }
   .hero h1 {
     @apply text-4xl leading-none font-bold tracking-tight sm:text-6xl lg:text-7xl xl:text-8xl;
   }
   .hero-subtitle {
-    @apply mt-6 max-w-4xl text-lg leading-7 text-muted-foreground sm:text-xl sm:leading-8;
+    @apply mt-6 max-w-4xl text-muted-foreground;
+    @apply reading-text;
   }
   .desktop-break {
     @apply hidden xl:block;
@@ -179,12 +182,13 @@
     scroll-margin-top: 2rem;
   }
   .terminal-titlebar {
-    @apply relative flex h-11 items-center justify-center border-b;
+    @apply relative flex h-11 items-center justify-center border-b pr-4 pl-20 sm:px-20;
     border-color: var(--terminal-border);
     background: var(--terminal-bar);
   }
   .terminal-titlebar h2 {
-    @apply text-sm font-normal;
+    @apply min-w-0 truncate font-normal;
+    @apply metadata-text;
   }
   .terminal-controls {
     @apply absolute left-4 flex gap-2;
@@ -202,17 +206,18 @@
     background: var(--traffic-maximize);
   }
   .terminal-body {
-    @apply flex flex-col gap-6 p-3 sm:p-8 md:px-4 lg:px-8;
+    @apply flex flex-col gap-6;
+    @apply panel-padding;
   }
   .terminal pre {
     @apply m-0 font-mono;
   }
   .terminal-command {
-    @apply text-sm leading-6 whitespace-pre-wrap sm:text-xl sm:leading-8 lg:text-2xl xl:text-3xl xl:leading-9;
+    @apply text-lg leading-7 whitespace-pre-wrap sm:text-2xl sm:leading-8 xl:text-3xl xl:leading-9;
     overflow-wrap: anywhere;
   }
   .terminal-output {
-    @apply text-base leading-tight font-semibold tracking-tight whitespace-pre-wrap sm:text-2xl lg:text-3xl xl:text-5xl;
+    @apply text-lg leading-tight font-semibold tracking-tighter whitespace-pre-wrap sm:text-2xl sm:tracking-tight lg:text-3xl xl:text-5xl;
     overflow-wrap: anywhere;
   }
   .hero-illustration {
@@ -222,22 +227,21 @@
   .installation {
     @apply mt-16;
   }
-  .installation:has(.copy-status:not(:empty)) {
-    @apply mb-4;
-  }
   .install-row {
-    @apply relative flex flex-col items-start gap-4 pt-8 sm:flex-row sm:items-center sm:gap-8;
+    @apply grid items-center gap-x-8 gap-y-4 pt-8;
     scroll-margin-top: 2rem;
   }
   .install-row h2 {
-    @apply shrink-0 text-xs leading-4 font-medium tracking-widest uppercase;
+    @apply shrink-0 font-medium tracking-widest uppercase;
+    @apply metadata-text;
   }
   .install-command {
     @apply flex w-full min-w-0 max-w-2xl items-center rounded-lg border border-border;
     background: var(--terminal-bar);
   }
   .install-command code {
-    @apply block min-w-0 flex-1 overflow-x-auto px-4 py-3 font-mono text-sm whitespace-nowrap sm:text-base;
+    @apply block min-w-0 flex-1 overflow-x-auto px-4 py-3 font-mono whitespace-nowrap;
+    @apply reading-text;
     scrollbar-width: thin;
   }
   .install-command code:focus-visible {
@@ -245,10 +249,11 @@
     outline-offset: -3px;
   }
   .copy-status {
-    @apply absolute top-full left-0 mt-2 text-sm leading-5 text-accent;
+    @apply text-accent sm:col-start-2;
+    @apply metadata-text;
   }
-  .site-footer {
-    @apply pt-8 pb-12 text-sm leading-6 text-muted-foreground;
+  .copy-status:empty {
+    @apply sr-only;
   }
   .site-footer a:hover {
     text-decoration: underline;
@@ -263,6 +268,11 @@
   }
 }
 
+@media (min-width: 40rem) {
+  .install-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
 @media (min-width: 48rem) {
   .hero {
     grid-template-columns: minmax(0, 1fr) 18rem;
@@ -302,9 +312,15 @@
   }
 }
 
-/* The continuation uses three standard steps: reading/UI, headings, and the result. */
-@utility continuation-reading {
+/* Shared reading and supporting text roles across the page. */
+@utility reading-text {
   @apply text-lg leading-7;
+}
+@utility metadata-text {
+  @apply text-sm leading-5;
+}
+@utility panel-padding {
+  @apply p-4 sm:p-8;
 }
 @utility ui-toggle-group {
   @apply grid w-full grid-cols-2 gap-1 rounded-xl border border-border p-1 sm:flex sm:w-auto;
@@ -312,7 +328,7 @@
 }
 @utility ui-toggle {
   @apply inline-flex h-11 min-w-0 flex-1 items-center justify-center rounded-lg px-3 font-medium whitespace-nowrap;
-  @apply continuation-reading;
+  @apply reading-text;
   cursor: pointer;
   &[data-pressed] {
     @apply bg-primary text-primary-foreground;
@@ -326,7 +342,7 @@
 }
 @utility ui-collapsible-trigger {
   @apply inline-flex min-h-11 items-center gap-2 py-2 text-accent;
-  @apply continuation-reading;
+  @apply reading-text;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
@@ -351,7 +367,7 @@
   .entropy-section,
   .usage-section {
     @apply mt-24 grid min-w-0 scroll-mt-8 gap-10 sm:mt-32 lg:grid-cols-12 lg:gap-12;
-    @apply continuation-reading;
+    @apply reading-text;
   }
   .continuation-copy {
     @apply min-w-0 lg:col-span-5;
@@ -367,7 +383,8 @@
     @apply text-accent underline underline-offset-4;
   }
   .entropy-panel {
-    @apply min-w-0 rounded-xl border border-border p-4 sm:p-8 lg:col-span-7;
+    @apply min-w-0 rounded-xl border border-border lg:col-span-7;
+    @apply panel-padding;
     background: var(--terminal);
   }
   .word-count-controls {
@@ -431,7 +448,8 @@
     @apply min-w-0 self-center lg:col-span-7;
   }
   .usage-example {
-    @apply flex min-w-0 flex-col gap-3 rounded-xl border border-border p-4 sm:p-8;
+    @apply flex min-w-0 flex-col gap-3 rounded-xl border border-border;
+    @apply panel-padding;
     background: var(--terminal);
   }
   .usage-example pre {
@@ -454,8 +472,8 @@
     @apply size-4 shrink-0;
   }
   .site-footer {
-    @apply mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 pt-0 sm:mt-32;
-    @apply continuation-reading;
+    @apply mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 pb-12 text-muted-foreground sm:mt-32;
+    @apply reading-text;
   }
   .footer-links {
     @apply flex flex-wrap items-center gap-x-6 gap-y-3;
