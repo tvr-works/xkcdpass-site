@@ -78,10 +78,10 @@ test('preview smoke verifies only its immutable URL and alias', async () => {
   });
   assert.deepEqual(hosts, new Set([deploymentUrl, previewAlias]));
 });
-test('production smoke requires main and verifies its immutable URL and public domain', async () => {
+test('production smoke requires main and verifies its immutable URL, public domain, and Pages alias', async () => {
   const hosts = responses('production');
   await verifyDeployment({ environment: 'production', deploymentUrl, sha: manifest.sha });
-  assert.deepEqual(hosts, new Set([deploymentUrl, origin]));
+  assert.deepEqual(hosts, new Set([deploymentUrl, origin, 'https://xkcdpass-site.pages.dev']));
 });
 for (const [description, overrides, pattern, changeHtml] of [
   ['wrong deployed commit', { sha: 'b'.repeat(40) }, /deployed SHA/u],

@@ -42,7 +42,10 @@ export async function verifyDeployment({
       !deployment.port,
   );
   const origins = new Set([deployment.origin]);
-  if (environment === 'production') origins.add(origin);
+  if (environment === 'production') {
+    origins.add(origin);
+    origins.add('https://xkcdpass-site.pages.dev');
+  }
   if (previewAlias) {
     assert.equal(environment, 'preview');
     const alias = new URL(previewAlias);

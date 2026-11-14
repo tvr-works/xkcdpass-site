@@ -54,7 +54,7 @@ Before declaring the rollout complete:
 1. Verify repository identity, public visibility, organization App access, and successful push CI on the intended `main` SHA.
 2. Read back the existing Pages project/source, branch controls, build command, output, domains, and preserved deployment history.
 3. On a disposable preview branch, introduce a failing gate-covered test and observe CI failure stopping the Cloudflare build before publication. Confirm production remains unchanged. Remove the failure on that branch and prove successful exact-SHA preview publication.
-4. Prove successful exact-SHA `main` publication, then run the hosted smoke check on the immutable deployment URL and production domain. Keep test failures out of `main`.
+4. Prove successful exact-SHA `main` publication, then run the hosted smoke check on the immutable deployment URL, production domain, and main `pages.dev` alias. Keep test failures out of `main`.
 5. Record the CI links, deployment IDs, logs showing gate acceptance/rejection, and smoke results in the migration record below.
 
 ```sh
@@ -65,7 +65,7 @@ EXPECTED_SHA=FULL_COMMIT_SHA npm run verify:deployment
 
 For preview, set `DEPLOYMENT_ENV=preview`, `EXPECTED_BRANCH` to the full repository branch name, and optionally `PREVIEW_ALIAS=https://BRANCH.xkcdpass-site.pages.dev`. Production requires branch `main`. Preview verification never requires production to match a feature-branch SHA. The immutable deployment URL uses Pages' eight-character hexadecimal deployment prefix.
 
-Smoke checks assert the published commit, public-file checksums, canonical/indexing policy, generated CSP, content/referrer/framing headers, robots MIME/content, real nested 404s, and absence of development files. Each origin has three bounded attempts for edge propagation. This script requires the new manifest/headers; it cannot verify the pre-migration site.
+Smoke checks assert the published commit, public-file checksums, canonical/indexing policy, generated CSP, content/referrer/framing headers, robots MIME/content, real nested 404s, and absence of development files. Production verification also checks `https://xkcdpass-site.pages.dev`: its canonical points to the custom domain, and a host-specific `_headers` rule adds `X-Robots-Tag: noindex`. The custom domain remains indexable. Each origin has three bounded attempts for edge propagation. This script requires the new manifest/headers; it cannot verify the pre-migration site.
 
 Failed CI or a denied/unreadable gate leaves the last successful publication in place. A later CI rerun does not automatically retry a failed Pages build: after verifying successful CI for the same branch/SHA and checking the branch head, retry through Pages. Prefer a revert through the same CI/gate for content recovery. Emergency Pages rollback restores a previous artifact, not GitHub ownership, Git connection, or project settings; record the action and reconcile `main` afterward. The native Cloudflare Pages check reports publication separately from Actions validation.
 

@@ -35,7 +35,7 @@ const hashes = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gu)]
 const csp = `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`;
 await writeFile(
   resolve(directory, '_headers'),
-  `/*\n  Content-Security-Policy: ${csp}\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n/deployment.json\n  Cache-Control: no-store\n`,
+  `/*\n  Content-Security-Policy: ${csp}\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY\n  Permissions-Policy: camera=(), microphone=(), geolocation=()\n/deployment.json\n  Cache-Control: no-store\nhttps://xkcdpass-site.pages.dev/*\n  X-Robots-Tag: noindex\n`,
 );
 const files = Object.fromEntries(
   await Promise.all(

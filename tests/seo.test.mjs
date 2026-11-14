@@ -95,3 +95,12 @@ test('the browser and search favicon resolves to a square vector asset', async (
   assert.equal(information.width, information.height);
   assert.ok(information.width >= 48);
 });
+
+test('the Pages production alias is explicitly noindexed without blocking the custom domain', async () => {
+  const headers = await readFile(resolve(root, 'dist/_headers'), 'utf8');
+  assert.match(headers, /^https:\/\/xkcdpass-site\.pages\.dev\/\*\n  X-Robots-Tag: noindex$/mu);
+  for (const block of headers.split(/(?=^\S)/mu)) {
+    if (block.includes('X-Robots-Tag: noindex'))
+      assert.ok(block.startsWith('https://xkcdpass-site.pages.dev/*\n'));
+  }
+});
