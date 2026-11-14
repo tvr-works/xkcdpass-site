@@ -363,6 +363,9 @@
   .entropy-assumptions {
     @apply mt-6 text-muted-foreground;
   }
+  .section-intro a {
+    @apply text-accent underline underline-offset-4;
+  }
   .entropy-panel {
     @apply min-w-0 rounded-xl border border-border p-4 sm:p-8 lg:col-span-7;
     background: var(--terminal);

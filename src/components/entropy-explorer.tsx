@@ -26,12 +26,16 @@ export function EntropyExplorer() {
           Why simple words can make strong passwords.
         </h2>
         <p className="section-intro">
-          Every word is chosen independently at random from {choices} possibilities. Each extra word
-          multiplies the possibilities by {choices}.
+          Words come from{' '}
+          <a href="https://www.eff.org/deeplinks/2016/07/new-wordlists-random-passphrases">
+            EFF’s wordlist
+          </a>
+          , curated for familiarity and easier spelling. Cryptographically random selection makes
+          the combination hard to guess.
         </p>
         <p className="entropy-assumptions">
-          The EFF wordlist is public. These counts assume independent random selection, with the
-          wordlist and count already known.
+          Each word is chosen independently from {choices} possibilities. Each extra word multiplies
+          the possibilities by {choices}, even when the public wordlist and word count are known.
         </p>
         <noscript>
           <p className="entropy-assumptions">
