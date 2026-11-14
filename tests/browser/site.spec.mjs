@@ -13,7 +13,7 @@ test('renders the approved hero and all compiled assets without runtime errors',
   });
   await page.goto('/');
   await expect(page).toHaveTitle('xkcdpass | CLI passphrase generator for humans');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hard to guess.Easy to use.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Easy to use.Hard to guess.');
   await expect(page.locator('.hero-subtitle')).toHaveText(
     'Cryptographically strong passphrases, generated locally in your terminal. Familiar words you can read, retype, and say aloud.',
   );

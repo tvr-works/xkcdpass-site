@@ -17,7 +17,7 @@ test('compiled, prerendered output fits budgets and includes content without Jav
   const directory = await fixture(t);
   await validateOutput(directory);
   const html = await readFile(resolve(directory, 'index.html'), 'utf8');
-  assert.match(html, /Hard to guess\.<br\/>Easy to use\./u);
+  assert.match(html, /Easy to use\.<br\/>Hard to guess\./u);
   assert.match(html, /turtlerocketcactusdonut/u);
   assert.match(html, /brew install tvr-works\/tap\/xkcdpass/u);
 });

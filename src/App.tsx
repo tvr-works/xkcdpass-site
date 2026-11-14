@@ -181,9 +181,9 @@ export default function App() {
           <div className="hero-copy">
             <p className="eyebrow">Command-line passphrase generator</p>
             <h1 id="hero-title">
-              Hard to guess.
-              <br />
               Easy to use.
+              <br />
+              Hard to guess.
             </h1>
             <p className="hero-subtitle">
               Cryptographically strong passphrases, generated locally in your terminal.
