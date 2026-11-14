@@ -58,7 +58,7 @@ for (const [description, change, expected] of [
   ['invalid structured data', (html) => html.replace('"@context":', '"@context"'), SyntaxError],
   [
     'unsafe link',
-    (html) => html.replace('href="#usage"', 'href="javascript:alert(1)"'),
+    (html) => html.replace('href="#main"', 'href="javascript:alert(1)"'),
     /unsafe URL/u,
   ],
 ]) {

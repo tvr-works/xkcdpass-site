@@ -142,9 +142,6 @@
   .site-nav {
     @apply flex items-center gap-6 text-base leading-6;
   }
-  .nav-example {
-    @apply hidden md:block;
-  }
   .nav-github {
     @apply hidden items-center gap-2 sm:inline-flex;
   }

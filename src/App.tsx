@@ -168,9 +168,6 @@ export default function App() {
           </a>
         </div>
         <nav className="site-nav" aria-label="Primary">
-          <a className="nav-example" href="#usage">
-            Examples
-          </a>
           <a className="nav-github" href={application}>
             GitHub <ArrowUpRight aria-hidden="true" />
           </a>

@@ -37,16 +37,9 @@ test('renders the approved hero and all compiled assets without runtime errors',
   expect(errors).toEqual([]);
 });
 
-test('example and install navigation reach their visible targets on desktop and mobile', async ({
-  page,
-}) => {
+test('install navigation reaches its visible target on desktop and mobile', async ({ page }) => {
   await page.goto('/');
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.getByRole('link', { name: 'Examples', exact: true }).click();
-  await expect(page).toHaveURL(/#usage$/u);
-  await expect(
-    page.getByRole('heading', { name: 'Two flags. Your preferred format.', exact: true }),
-  ).toBeInViewport();
   await page.getByRole('link', { name: 'Install xkcdpass', exact: true }).click();
   await expect(page).toHaveURL(/#install$/u);
   await expect(
