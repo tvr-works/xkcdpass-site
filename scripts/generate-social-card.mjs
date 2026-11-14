@@ -22,7 +22,7 @@ try {
     await document.fonts.ready;
     await Promise.all([...document.images].map((image) => image.decode()));
   });
-  assert.equal(await page.evaluate(() => document.fonts.check('700 72px Geist')), true);
+  assert.equal(await page.evaluate(() => document.fonts.check('700 88px Geist')), true);
   assert.deepEqual(errors, []);
   const path = resolve(root, 'public/assets/xkcdpass-social.png');
   await sharp(await page.screenshot())
