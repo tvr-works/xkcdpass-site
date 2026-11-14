@@ -90,6 +90,26 @@ test('copy reports success, restores its label, and reports clipboard rejection'
           document.querySelector('.site-footer p').getBoundingClientRect().top,
       ),
   ).toBe(true);
+  for (const width of [320, 640, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await button.click();
+    await expect(page.locator('.copy-status')).toContainText('Could not copy.');
+    const feedback = await page.evaluate(() => {
+      const status = document.querySelector('.copy-status').getBoundingClientRect();
+      const install = document.querySelector('.installation').getBoundingClientRect();
+      const lesson = document.querySelector('#strength');
+      return {
+        contained: status.bottom <= install.bottom,
+        sectionGap: lesson.getBoundingClientRect().top - install.bottom,
+        expectedGap: parseFloat(getComputedStyle(lesson).marginTop),
+      };
+    });
+    expect(feedback.contained, `copy feedback stays in flow at ${width}px`).toBe(true);
+    expect(feedback.sectionGap, `lesson spacing after feedback at ${width}px`).toBeCloseTo(
+      feedback.expectedGap,
+      0,
+    );
+  }
 });
 
 test('preserves static content and mobile navigation without JavaScript', async ({ browser }) => {
@@ -311,12 +331,10 @@ test('word count controls update the diagram, result, exact math, and screen-rea
   expect(errors).toEqual([]);
 });
 
-test('continuation keeps one reading scale and groups the explorer across responsive layouts', async ({
-  page,
-}) => {
+test('page keeps shared type and spacing roles across responsive layouts', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'How the math works' }).click();
-  for (const width of [320, 390, 1024, 1374]) {
+  for (const width of [320, 390, 640, 768, 1024, 1374]) {
     await page.setViewportSize({ width, height: 900 });
     const typography = await page.evaluate(() => {
       const sizes = (selector) => [
@@ -329,16 +347,38 @@ test('continuation keeps one reading scale and groups the explorer across respon
       return {
         headings: sizes('.section-title'),
         reading: sizes(
-          '.section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
+          '.hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
         ),
+        metadata: sizes('.eyebrow, .install-row h2, .terminal-titlebar h2, .brand-credit'),
+        actions: sizes('.site-nav, .hero-actions a, .site-nav .ui-button'),
         result: sizes('.entropy-number'),
       };
     });
     expect(typography, `type scale at ${width}px`).toEqual({
       headings: ['36px'],
       reading: ['18px'],
+      metadata: ['14px'],
+      actions: ['16px'],
       result: ['48px'],
     });
+    const framing = await page.evaluate(() => {
+      const title = document.querySelector('.terminal-titlebar h2').getBoundingClientRect();
+      const controls = document.querySelector('.terminal-controls').getBoundingClientRect();
+      return {
+        titleClear: title.left >= controls.right,
+        panelPadding: [
+          ...new Set(
+            ['.terminal-body', '.entropy-panel', '.usage-example'].map(
+              (selector) => getComputedStyle(document.querySelector(selector)).padding,
+            ),
+          ),
+        ],
+      };
+    });
+    expect(framing.titleClear, `terminal title clears controls at ${width}px`).toBe(true);
+    expect(framing.panelPadding, `shared panel padding at ${width}px`).toEqual([
+      width < 640 ? '16px' : '32px',
+    ]);
     const layout = await page.evaluate(() => {
       const bounds = (selector) => document.querySelector(selector).getBoundingClientRect();
       const panel = bounds('.entropy-panel');

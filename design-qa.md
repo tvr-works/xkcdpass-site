@@ -1,8 +1,33 @@
-# Grouped continuation layout QA
+# Whole-page spacing and typography QA
 
 final result: passed
 
 The approved two-column continuation is implemented with a shared, standard type scale: 36px section headings, 18px reading/UI/code text, and 48px numerical results. These sizes apply at mobile and desktop widths. All explanatory detail, exact calculations, security assumptions, interactive counts, and the math disclosure are retained.
+
+## Final whole-page pass
+
+The latest pass covers header, hero, terminal, install strip, lesson, usage, and footer on desktop, tablet, and mobile. The accepted layout, content, illustration breakpoint, and illustration height remain intact.
+
+1. **Header and hero — passed.** Supporting labels now share 14px/20px metadata, header actions match the 16px hero actions, and the subtitle uses the same 18px/28px reading role as the lesson. Hero heading/display steps remain responsive.
+2. **Terminal and installation — passed.** Mobile command/output now use 18px instead of 14/16px. All three main panels share 16px padding below 640px and 32px above it. Tight tracking keeps the joined hero passphrase on one line at 320px. Terminal title space is reserved beside the window controls; narrow-screen overlap is fixed. Header/copy buttons have 44px targets. Copy feedback takes a real grid row and preserves the following section gap when it wraps; an empty live region remains screen-reader accessible without taking layout space.
+3. **Lesson, usage, footer — passed.** Existing 36px headings, 18px reading/UI/code, 48px results, 96/128px section gaps, and responsive grouping are retained. Duplicate footer font/spacing declarations were consolidated. Expanded six-word math, complete usage output, and all footer links remain readable.
+
+Current-run screenshot evidence is in `/private/tmp/xkcdpass-final-polish/`, captured through the in-app Browser at density 1:
+
+- `01-desktop-hero-before.jpg` / `01-desktop-hero-after.jpg`: 1440 × 1000, default four words, disclosure closed.
+- `02-desktop-continuation-before.jpg` / `02-desktop-continuation-after.jpg`: 1440 × 1000, lesson through usage. `10-desktop-footer-after.jpg` includes the complete desktop footer.
+- `03-mobile-hero-before.jpg` / `03-mobile-hero-after.jpg`: 390 × 844, default hero.
+- `04-mobile-install-before.jpg` / `04-mobile-install-after.jpg`: 390 × 844, install strip and lesson copy.
+- `05-mobile-usage-before.jpg` / `05-mobile-usage-after.jpg`: 390 × 844, flags/example. `09-mobile-footer-after.jpg` includes the complete mobile footer.
+- `06-tablet-hero-before.jpg` / `06-tablet-hero-after.jpg`: 768 × 1000, preserved illustration column. The later title-space fix does not change this viewport's layout.
+- `07-narrow-hero-after.jpg` exposed the remaining title/control overlap at 320 × 844. `07-narrow-hero-final.jpg` confirms the fix, with no text overlap or page overflow.
+- `08-mobile-math-after.jpg`: 390 × 844, six words selected, math expanded. Default-four/closed state restored for handoff.
+
+All accepted screenshots were inspected at capture time. One desktop capture initially retained an earlier scroll position; it is used only as footer evidence. The hero was recaptured at the correct top position. No stretched composites or off-screen full-page renders support this pass.
+
+Verification: `npm run check` passed all 54 Node tests plus format, Oxlint/shadcn lint, TypeScript, static validation, and build budgets. Full Chromium/WebKit suite: 15 passed, one expected WebKit clipboard-permission skip. Extended acceptance checks cover shared type/padding roles and clear terminal controls at 320, 390, 640, 768, 1024, and 1374px; existing overflow/hero-placement coverage spans 320–1920px. Clipboard rejection is checked at 320, 640, and 1440px for contained feedback and unchanged section gaps. Keyboard, axe, no-JavaScript, metadata, CSP, and asset delivery checks pass. Manual six-word disclosure interaction passes; no in-app console warnings/errors. Preview remains open with the temporary viewport override reset.
+
+No actionable P0/P1/P2 findings remain. Physical-device and manual screen-reader testing remain outside this pass. The comparison below records the earlier selected-layout implementation; its original screen captures are historical context.
 
 ## Visual truth and evidence
 
@@ -22,7 +47,7 @@ The approved two-column continuation is implemented with a shared, standard type
 
 ## Required fidelity surfaces
 
-- **Fonts and hierarchy:** shared `continuation-reading` utility uses Tailwind `text-lg` and `leading-7`; headings use `text-4xl` with tight leading; results use `text-5xl`. No responsive font-size variation in the continuation. Standard superscript/subscript math notation remains semantic. Geist is self-hosted; native monospace fallback is unchanged. Weight and color distinguish code, output, labels, and links without adding sizes. No clipping or truncation observed.
+- **Fonts and hierarchy:** shared `reading-text` utility uses Tailwind `text-lg` and `leading-7`; headings use `text-4xl` with tight leading; results use `text-5xl`. No responsive font-size variation in the continuation. Standard superscript/subscript math notation remains semantic. Geist is self-hosted; native monospace fallback is unchanged. Weight and color distinguish code, output, labels, and links without adding sizes. No clipping or truncation observed.
 - **Spacing and layout:** shared 5/7 column split from 1024px, 48px desktop column gap, 40px stacked gap, 96/128px whitespace between sections, and 16/32px panel padding. The explorer groups inputs, inline multiplication, result, bits, and disclosure inside one translucent frame. Usage groups plain flag/default pairs and platform links on the left, example/note on the right. No new section HRs. The former large brace and outlined static values are removed.
 - **Colors and tokens:** existing midnight navy, white, muted gray, icy blue, translucent terminal surface, selected control, and focus ring tokens. No new gradients or inline style exceptions. The background continues at its width-preserving aspect ratio.
 - **Assets:** existing hero illustration and background reused unchanged. The selected layout has no brace, so its unused raster asset and public-file entries were removed. No generated asset or custom drawing was added.
