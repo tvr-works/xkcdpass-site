@@ -5,6 +5,7 @@ import { setImmediate } from 'node:timers/promises';
 import { resolve } from 'node:path';
 import { verifyDeployment } from '../scripts/verify-deployment.mjs';
 import { root, origin, listFiles } from '../scripts/site.mjs';
+import { pageFiles } from '../scripts/artifact-policy.mjs';
 
 let files;
 let manifest;
@@ -37,7 +38,7 @@ function responses(environment, overrides = {}, changeHtml = (body) => body) {
   mock.method(globalThis, 'fetch', async (input) => {
     const url = new URL(input);
     hosts.add(url.origin);
-    const file = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
+    const file = pageFiles.get(url.pathname) ?? url.pathname.slice(1);
     const responseHeaders = {
       ...headers,
       'Content-Type': file.endsWith('.html')

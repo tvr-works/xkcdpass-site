@@ -4,6 +4,7 @@ import { mkdtemp, cp, writeFile, readFile, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { root, validateDocuments, validateOutput, listFiles } from '../scripts/site.mjs';
+import { privacyStylesheetPattern } from '../scripts/artifact-policy.mjs';
 import budgets from '../build-budgets.json' with { type: 'json' };
 
 async function fixture(t) {
@@ -21,6 +22,37 @@ test('compiled, prerendered output fits budgets and includes content without Jav
   assert.match(html, /turtlerocketcactusdonut/u);
   assert.match(html, /brew install tvr-works\/tap\/xkcdpass/u);
 });
+test('the static privacy notice loads Typeset alongside the shared stylesheet', async () => {
+  const directory = resolve(root, 'dist');
+  const html = await readFile(resolve(directory, 'index.html'), 'utf8');
+  const notice = await readFile(resolve(directory, 'privacy.html'), 'utf8');
+  const stylesheetPaths = (document) =>
+    Array.from(
+      document.matchAll(/<link rel="stylesheet"[^>]*href="\/([^"]+)"/gu),
+      (match) => match[1],
+    );
+  const homeStylesheets = stylesheetPaths(html);
+  const noticeStylesheets = stylesheetPaths(notice);
+  const [sharedStylesheet] = homeStylesheets;
+  const privacyStylesheet = noticeStylesheets.find((path) => privacyStylesheetPattern.test(path));
+  assert.equal(homeStylesheets.length, 1);
+  assert.ok(privacyStylesheet);
+  assert.deepEqual(noticeStylesheets.toSorted(), [sharedStylesheet, privacyStylesheet].toSorted());
+  assert.notEqual(privacyStylesheet, sharedStylesheet);
+  assert.match(await readFile(resolve(directory, privacyStylesheet), 'utf8'), /--typeset-flow/u);
+  assert.doesNotMatch(
+    await readFile(resolve(directory, sharedStylesheet), 'utf8'),
+    /--typeset-flow/u,
+  );
+  assert.match(html, /<a href="\/privacy">Privacy<\/a>/u);
+  assert.match(notice, /<title>xkcdpass privacy<\/title>/u);
+  assert.match(notice, /<h1 id="privacy-title">xkcdpass privacy<\/h1>/u);
+  assert.match(
+    notice,
+    /<!--email_off--><a href="mailto:support@tvr\.works">support@tvr\.works<\/a><!--\/email_off-->/u,
+  );
+  assert.doesNotMatch(notice, /<script\b|\/src\//u);
+});
 test('an accidental development file cannot be published', async (t) => {
   const directory = await fixture(t);
   await writeFile(resolve(directory, 'package.json'), '{}');
@@ -28,13 +60,16 @@ test('an accidental development file cannot be published', async (t) => {
 });
 test('development-only class names are excluded from compiled CSS', async (t) => {
   const directory = await fixture(t);
-  const css = (await listFiles(directory)).find(
+  const stylesheets = (await listFiles(directory)).filter(
     (file) => file.startsWith('assets/') && file.endsWith('.css'),
   );
   // This literal deliberately lives outside the application sources.
   const developmentOnlyClass = 'bg-fuchsia-950';
-  assert.ok(
-    !(await readFile(resolve(directory, css), 'utf8')).includes(`.${developmentOnlyClass}`),
+  await Promise.all(
+    stylesheets.map(async (stylesheet) => {
+      const css = await readFile(resolve(directory, stylesheet), 'utf8');
+      assert.ok(!css.includes(`.${developmentOnlyClass}`), stylesheet);
+    }),
   );
 });
 test('a missing illustration blocks packaging', async (t) => {

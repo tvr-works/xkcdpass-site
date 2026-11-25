@@ -5,7 +5,13 @@ import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
 import { parse, parseFragment } from 'parse5';
 import budgets from '../build-budgets.json' with { type: 'json' };
-import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
+import {
+  pageFiles,
+  pageRoutes,
+  publicFiles,
+  compiledAssetPattern,
+  privacyStylesheetPattern,
+} from './artifact-policy.mjs';
 
 export const root = fileURLToPath(new URL('../', import.meta.url));
 export const origin = 'https://xkcdpass.tvr.works';
@@ -67,10 +73,11 @@ export async function validateDocuments(directory, files, { source = false } = {
             JSON.parse(node.childNodes.map((child) => child.value ?? '').join(''));
           }
         });
-        documents.set(file, { document, ids });
+        documents.set(file, { document, ids, text });
       }),
   );
   for (const [file, { document }] of documents) {
+    const pageUrl = `${origin}${pageRoutes[file] ?? `/${file}`}`;
     walk(document, (node) => {
       for (const { name, value } of node.attrs ?? []) {
         if (!['src', 'href', 'aria-controls'].includes(name)) continue;
@@ -78,13 +85,16 @@ export async function validateDocuments(directory, files, { source = false } = {
           assert.ok(documents.get(file).ids.has(value), `${file}: missing control target ${value}`);
           continue;
         }
-        const url = new URL(value, `${origin}/${file}`);
+        const url = new URL(value, pageUrl);
         assert.ok(['http:', 'https:', 'mailto:'].includes(url.protocol), `${file}: unsafe URL`);
         if (url.origin !== origin) continue;
-        const target = decodeURIComponent(url.pathname).replace(/^\//, '') || 'index.html';
+        const pathname = decodeURIComponent(url.pathname);
+        const target = pageFiles.get(pathname) ?? pathname.slice(1);
         assert.ok(
           files.includes(target) ||
-            (source && (target === 'src/main.tsx' || publicFiles.includes(target))),
+            (source &&
+              (['src/main.tsx', 'src/styles.css', 'src/privacy.css'].includes(target) ||
+                publicFiles.includes(target))),
           `${file}: missing public file ${value}`,
         );
         if (url.hash)
@@ -95,15 +105,17 @@ export async function validateDocuments(directory, files, { source = false } = {
       }
     });
   }
-  const html = await readFile(resolve(directory, 'index.html'), 'utf8');
-  assert.ok(
-    html.includes(`rel="canonical" href="${origin}/"`),
-    'Preserve the production canonical URL.',
-  );
-  assert.ok(
-    html.includes('content="index,follow,max-image-preview:large"'),
-    'Preserve public indexing.',
-  );
+  for (const [file, path] of Object.entries(pageRoutes)) {
+    const html = documents.get(file).text;
+    assert.ok(
+      html.includes(`rel="canonical" href="${origin}${path}"`),
+      `${file}: production canonical URL`,
+    );
+    assert.ok(
+      html.includes('content="index,follow,max-image-preview:large"'),
+      `${file}: public indexing`,
+    );
+  }
 }
 
 export async function validateSource() {
@@ -113,25 +125,27 @@ export async function validateSource() {
     publicFiles.toSorted(),
     'Only declared public assets may be copied by Vite.',
   );
-  await validateDocuments(root, ['index.html'], { source: true });
+  await validateDocuments(root, Object.keys(pageRoutes), { source: true });
   assert.equal(
     await readFile(resolve(root, 'public/robots.txt'), 'utf8'),
     `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`,
   );
   const sitemap = await readFile(resolve(root, 'public/sitemap.xml'), 'utf8');
-  assert.deepEqual(sitemap.match(/<loc>[^<]+<\/loc>/gu), [`<loc>${origin}/</loc>`]);
+  assert.deepEqual(
+    sitemap.match(/<loc>[^<]+<\/loc>/gu),
+    [...pageFiles.keys()].map((path) => `<loc>${origin}${path}</loc>`),
+  );
 }
 
 export async function validateOutput(directory) {
   const files = await listFiles(directory);
+  const required = [...Object.keys(pageRoutes), '_headers', 'deployment.json', ...publicFiles];
   for (const file of files)
     assert.ok(
-      ['index.html', '_headers', 'deployment.json', ...publicFiles].includes(file) ||
-        compiledAssetPattern.test(file),
+      required.includes(file) || compiledAssetPattern.test(file),
       `Only allowlisted public files may be published: ${file}`,
     );
-  for (const file of ['index.html', '_headers', 'deployment.json', ...publicFiles])
-    assert.ok(files.includes(file), `Missing public asset: ${file}`);
+  for (const file of required) assert.ok(files.includes(file), `Missing public asset: ${file}`);
   await validateDocuments(directory, files);
   const manifest = JSON.parse(await readFile(resolve(directory, 'deployment.json'), 'utf8'));
   assert.deepEqual(
@@ -140,12 +154,13 @@ export async function validateOutput(directory) {
     'Manifest must cover the complete public artifact.',
   );
   const groups = {
-    javascript: ['.js'],
-    css: ['.css'],
-    html: ['.html'],
-    images: ['.png', '.svg', '.webp'],
-    fonts: ['.woff2'],
-    total: null,
+    javascript: (file) => file.endsWith('.js'),
+    css: (file) => file.endsWith('.css') && !privacyStylesheetPattern.test(file),
+    privacyCss: (file) => privacyStylesheetPattern.test(file),
+    html: (file) => file.endsWith('.html'),
+    images: (file) => ['.png', '.svg', '.webp'].includes(extname(file)),
+    fonts: (file) => file.endsWith('.woff2'),
+    total: () => true,
   };
   const sizes = await Promise.all(
     files.map(async (file) => {
@@ -153,8 +168,8 @@ export async function validateOutput(directory) {
       return { file, raw: bytes.length, gzip: gzipSync(bytes, { level: 9 }).length };
     }),
   );
-  for (const [name, extensions] of Object.entries(groups)) {
-    const selected = sizes.filter(({ file }) => !extensions || extensions.includes(extname(file)));
+  for (const [name, matches] of Object.entries(groups)) {
+    const selected = sizes.filter(({ file }) => matches(file));
     assert.ok(selected.length, `Missing ${name} assets`);
     const raw = selected.reduce((sum, file) => sum + file.raw, 0);
     const gzip = selected.reduce((sum, file) => sum + file.gzip, 0);

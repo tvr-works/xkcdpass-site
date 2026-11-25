@@ -7,6 +7,10 @@
     "maxRawKiB": 32,
     "maxGzipKiB": 8
   },
+  "privacyCss": {
+    "maxRawKiB": 20,
+    "maxGzipKiB": 3
+  },
   "html": {
     "maxRawKiB": 24,
     "maxGzipKiB": 8

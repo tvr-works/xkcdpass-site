@@ -15,6 +15,12 @@
       "rules": {
         "eslint/no-await-in-loop": "off"
       }
+    },
+    {
+      "files": ["src/PrivacyPage.tsx"],
+      "rules": {
+        "shadcn/no-unknown-classes": ["error", { "allow": ["typeset", "typeset-privacy"] }]
+      }
     }
   ],
   "ignorePatterns": [

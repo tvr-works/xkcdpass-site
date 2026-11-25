@@ -2,8 +2,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 import { EntropyExplorer } from '@/components/entropy-explorer';
 import { InstallationSection } from '@/components/installation-section';
-
-const applicationRepositoryUrl = 'https://github.com/tvr-works/xkcdpass';
+import { SiteFrame, applicationRepositoryUrl } from '@/components/site-frame';
 
 function TerminalExample() {
   return (
@@ -72,73 +71,44 @@ function UsageSection() {
 
 export default function App() {
   return (
-    <div className="page" id="top">
-      <a className="skip-link" href="#main">
-        Skip to content
-      </a>
-      <header className="site-header shell">
-        <div className="brand-group">
-          <a className="brand" href="#top" aria-label="xkcdpass home">
-            xkcdpass
-          </a>
-          <a className="brand-credit" href="https://tvr.works/software">
-            by TVR Works
-          </a>
-        </div>
-        <nav className="site-nav" aria-label="Primary">
-          <a className="nav-github" href={applicationRepositoryUrl}>
-            GitHub <ArrowUpRight aria-hidden="true" />
-          </a>
-          <a className={buttonVariants()} href="#install">
-            Install
-          </a>
-        </nav>
-      </header>
-      <main className="shell" id="main" tabIndex={-1}>
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-copy">
-            <p className="eyebrow">Command-line passphrase generator</p>
-            <h1 id="hero-title">
-              Easy to use.
-              <br />
-              Hard to guess.
-            </h1>
-            <p className="hero-subtitle">
-              Cryptographically strong passphrases, generated locally in your terminal.
-              <br className="desktop-break" /> Familiar words you can read, retype, and say aloud.
-            </p>
-            <div className="hero-actions">
-              <a className={buttonVariants({ size: 'lg' })} href="#install">
-                Install xkcdpass
-              </a>
-              <a
-                className={buttonVariants({ variant: 'link', size: 'lg' })}
-                href={applicationRepositoryUrl}
-              >
-                View on GitHub <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
-              </a>
-            </div>
+    <SiteFrame>
+      <section className="hero" aria-labelledby="hero-title">
+        <div className="hero-copy">
+          <p className="eyebrow">Command-line passphrase generator</p>
+          <h1 id="hero-title">
+            Easy to use.
+            <br />
+            Hard to guess.
+          </h1>
+          <p className="hero-subtitle">
+            Cryptographically strong passphrases, generated locally in your terminal.
+            <br className="desktop-break" /> Familiar words you can read, retype, and say aloud.
+          </p>
+          <div className="hero-actions">
+            <a className={buttonVariants({ size: 'lg' })} href="#install">
+              Install xkcdpass
+            </a>
+            <a
+              className={buttonVariants({ variant: 'link', size: 'lg' })}
+              href={applicationRepositoryUrl}
+            >
+              View on GitHub <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
+            </a>
           </div>
-          <TerminalExample />
-          <img
-            className="hero-illustration"
-            src="/assets/passphrase-thought.webp"
-            width="962"
-            height="1363"
-            alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can type that.’"
-            fetchPriority="high"
-          />
-        </section>
-        <EntropyExplorer />
-        <UsageSection />
-        <InstallationSection repositoryUrl={applicationRepositoryUrl} />
-      </main>
-      <footer className="site-footer shell">
-        <p>
-          Inspired by <a href="https://xkcd.com/936/">xkcd #936</a>.
-        </p>
-        <a href="https://tvr.works/software">by TVR Works</a>
-      </footer>
-    </div>
+        </div>
+        <TerminalExample />
+        <img
+          className="hero-illustration"
+          src="/assets/passphrase-thought.webp"
+          width="962"
+          height="1363"
+          alt="A thinking stick figure pictures a turtle, rocket, cactus, and donut: ‘I can type that.’"
+          fetchPriority="high"
+        />
+      </section>
+      <EntropyExplorer />
+      <UsageSection />
+      <InstallationSection repositoryUrl={applicationRepositoryUrl} />
+    </SiteFrame>
   );
 }

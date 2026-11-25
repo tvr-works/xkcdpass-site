@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { createHash } from 'node:crypto';
+import { pageRoutes } from '../../scripts/artifact-policy.mjs';
 
 test('renders the approved hero and all compiled assets without runtime errors', async ({
   page,
@@ -213,6 +214,61 @@ test('preserves static content and mobile navigation without JavaScript', async 
   }
 });
 
+test('the footer opens the prerendered privacy notice without JavaScript', async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    await page.goto('/');
+    await page.getByRole('contentinfo').getByRole('link', { name: 'Privacy' }).click();
+    await expect(page).toHaveURL(/\/privacy$/u);
+
+    const privacy = await page.goto('/privacy');
+    expect(privacy.status()).toBe(200);
+    expect(privacy.headers()['content-type']).toContain('text/html');
+    await expect(page).toHaveTitle('xkcdpass privacy');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('xkcdpass privacy');
+    await expect(page.getByRole('article').getByRole('heading', { level: 2 })).toHaveText([
+      'Website visits',
+      'Passphrases and the browser demo',
+      'Support and privacy questions',
+    ]);
+    await expect(page.locator('time')).toHaveAttribute('datetime', '2026-11-24');
+    await expect(page.locator('link[rel=canonical]')).toHaveAttribute(
+      'href',
+      'https://xkcdpass.tvr.works/privacy',
+    );
+    await expect(page.getByRole('link', { name: 'Cloudflare’s privacy policy' })).toHaveAttribute(
+      'href',
+      'https://www.cloudflare.com/privacypolicy/',
+    );
+    await expect(page.getByRole('link', { name: 'support@tvr.works' })).toHaveAttribute(
+      'href',
+      'mailto:support@tvr.works',
+    );
+    await expect(page.getByRole('link', { name: 'xkcd #936' })).toHaveAttribute(
+      'href',
+      'https://xkcd.com/936/',
+    );
+    for (const width of [320, 390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const layout = await page.evaluate(() => ({
+        pageWidth: document.documentElement.scrollWidth,
+        articleWidth: document.querySelector('article').getBoundingClientRect().width,
+      }));
+      expect(layout.pageWidth).toBe(width);
+      expect(layout.articleWidth).toBeLessThanOrEqual(680);
+    }
+    await page.getByRole('link', { name: 'Install', exact: true }).click();
+    await expect(page).toHaveURL(/\/#install$/u);
+    await expect(page.locator('#install-command')).toBeInViewport();
+  } finally {
+    await context.close();
+  }
+});
+
 test('keyboard skip link, responsive layouts, and the hero pass accessibility checks', async ({
   page,
   browserName,
@@ -329,12 +385,14 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
     sameAs: application,
   });
   await expect(page.locator(`a[href="${application}"]`)).toHaveCount(2);
-  await expect(page.getByRole('link', { name: 'xkcd #936', exact: true })).toHaveAttribute(
-    'href',
-    'https://xkcd.com/936/',
-  );
-  await expect(page.locator('.site-footer a')).toHaveCount(2);
-  await expect(page.locator('.site-footer nav')).toHaveCount(0);
+  const footer = page.getByRole('contentinfo');
+  await expect(footer).toContainText('© 2026 TVR Works LLC · Software · Privacy');
+  const footerLinks = footer.getByRole('link');
+  await expect(footerLinks).toHaveText(['Software', 'Privacy', 'xkcd #936']);
+  await expect(footerLinks.nth(0)).toHaveAttribute('href', 'https://tvr.works/software');
+  await expect(footerLinks.nth(1)).toHaveAttribute('href', '/privacy');
+  await expect(footerLinks.nth(2)).toHaveAttribute('href', 'https://xkcd.com/936/');
+  await expect(footer.getByRole('navigation')).toHaveCount(0);
   expect(html).not.toContain('github.com/tvanreenen/xkcdpass');
   expect(html).not.toContain('tvanreenen/tap');
   const robots = await request.get('/robots.txt');
@@ -353,7 +411,10 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
         locations: [...document.querySelectorAll('loc')].map((node) => node.textContent),
       };
     }, xml),
-  ).toEqual({ errors: 0, locations: ['https://xkcdpass.tvr.works/'] });
+  ).toEqual({
+    errors: 0,
+    locations: ['https://xkcdpass.tvr.works/', 'https://xkcdpass.tvr.works/privacy'],
+  });
   const missing = await page.goto('/unknown/nested/page');
   expect(missing.status()).toBe(404);
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
@@ -366,7 +427,7 @@ test('public indexing, metadata, XML, security headers, and true 404 survive pac
   expect(manifest.branch).toBeTruthy();
   for (const [path, expected] of Object.entries(manifest.files)) {
     if (path === '_headers') continue;
-    const artifact = await request.get(`/${path}`);
+    const artifact = await request.get(pageRoutes[path] ?? `/${path}`);
     expect(
       createHash('sha256')
         .update(await artifact.body())
@@ -438,9 +499,9 @@ test('page keeps shared type and spacing roles across responsive layouts', async
       return {
         headings: sizes('.section-title'),
         reading: sizes(
-          '.eyebrow, .hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer a',
+          '.eyebrow, .hero-subtitle, .install-command code, .section-intro, .entropy-assumptions, .word-count-label, .ui-toggle, .word-choice, .entropy-result-label, .entropy-bits, .ui-collapsible-trigger, .math-explanation p, .flag-reference code, .flag-reference dd, .usage-example code, .usage-example samp, .usage-note, .platform-links a, .site-footer-credit a',
         ),
-        metadata: sizes('.terminal-titlebar h2, .brand-credit'),
+        metadata: sizes('.terminal-titlebar h2, .site-footer-legal a'),
         actions: sizes('.site-nav, .hero-actions a, .site-nav .ui-button'),
         result: sizes('.entropy-number'),
       };

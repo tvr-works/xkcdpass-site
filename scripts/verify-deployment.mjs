@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
+import { pageRoutes, publicFiles, compiledAssetPattern } from './artifact-policy.mjs';
 
 const origin = 'https://xkcdpass.tvr.works';
 const repository = 'tvr-works/xkcdpass-site';
@@ -130,7 +130,7 @@ export async function verifyDeployment({
     assert.equal(manifest.repository, repository);
     assert.equal(manifest.branch, expectedBranch, `${base}: deployed branch`);
     const manifestFiles = Object.keys(manifest.files).filter((file) => file !== '_headers');
-    const required = ['index.html', ...publicFiles];
+    const required = [...Object.keys(pageRoutes), ...publicFiles];
     for (const file of required)
       assert.ok(manifestFiles.includes(file), `${base}: missing ${file}`);
     for (const file of manifestFiles)
@@ -141,11 +141,8 @@ export async function verifyDeployment({
     await Promise.all(
       manifestFiles.map(async (path) => {
         const publicPath =
-          path === 'index.html'
-            ? '/'
-            : path === '404.html'
-              ? '/missing-deployment-check/nested'
-              : `/${path}`;
+          pageRoutes[path] ??
+          (path === '404.html' ? '/missing-deployment-check/nested' : `/${path}`);
         const artifact = await get(base, publicPath);
         assert.equal(artifact.status, path === '404.html' ? 404 : 200, `${base}/${path}`);
         const bytes = Buffer.from(await artifact.arrayBuffer());
