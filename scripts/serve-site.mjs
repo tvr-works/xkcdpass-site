@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { resolve, sep, extname } from 'node:path';
 import { root } from './site.mjs';
+import { pageFiles, pageRoutes } from './artifact-policy.mjs';
 
 // Local artifact preview only. Hosted smoke tests separately verify Pages' real delivery.
 const directory = resolve(root, 'dist');
@@ -37,11 +38,18 @@ const server = createServer(async (request, response) => {
       response.end();
       return;
     }
-    const path = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    const url = new URL(request.url, 'http://localhost');
+    const path = decodeURIComponent(url.pathname);
     for (const entry of rules)
       if (entry.path === '/*' || entry.path === path)
         for (const [name, value] of Object.entries(entry.headers)) response.setHeader(name, value);
-    let file = resolve(directory, `.${path === '/' ? '/index.html' : path}`);
+    const cleanPath = Object.hasOwn(pageRoutes, path.slice(1)) ? pageRoutes[path.slice(1)] : null;
+    if (cleanPath && cleanPath !== '/') {
+      response.writeHead(308, { Location: `${cleanPath}${url.search}` });
+      response.end();
+      return;
+    }
+    let file = resolve(directory, `./${pageFiles.get(path) ?? path.slice(1)}`);
     let status = 200;
     if (!file.startsWith(directory + sep) || path === '/_headers') {
       response.writeHead(404);

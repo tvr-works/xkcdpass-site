@@ -133,17 +133,9 @@
   .site-header {
     @apply flex items-center justify-between gap-6 py-6;
   }
-  .brand-group {
-    @apply flex items-center gap-6;
-  }
   .brand {
     @apply text-2xl leading-none font-bold tracking-tight;
   }
-  .brand-credit {
-    @apply hidden text-muted-foreground lg:block;
-    @apply metadata-text;
-  }
-  .brand-credit:hover,
   .site-nav > a:not(.ui-button):hover {
     color: var(--accent);
   }
@@ -468,10 +460,32 @@
     @apply size-4 shrink-0;
   }
   .site-footer {
-    @apply mt-24 flex flex-wrap items-center justify-between gap-x-8 gap-y-6 pb-12 text-muted-foreground sm:mt-32;
+    @apply mt-24 flex flex-col gap-x-8 gap-y-1 pb-12 text-muted-foreground sm:mt-32 sm:flex-row sm:items-center sm:justify-between;
+    @apply metadata-text;
+  }
+  .site-footer-legal,
+  .site-footer-legal-links {
+    @apply flex flex-wrap items-center gap-x-2;
+  }
+  .site-footer a {
+    @apply inline-flex min-h-11 items-center;
+    outline-offset: 3px;
+  }
+  .site-footer-credit {
     @apply reading-text;
   }
-  .site-footer p a {
+  .site-footer-credit a {
     @apply text-accent underline underline-offset-4;
+  }
+  .privacy-notice {
+    @apply max-w-[680px] pt-10 text-muted-foreground sm:pt-14;
+    overflow-wrap: anywhere;
+  }
+  .privacy-notice h1 {
+    @apply text-4xl leading-tight font-bold tracking-tight text-foreground sm:text-6xl;
+  }
+  .privacy-date {
+    @apply mt-4;
+    @apply metadata-text;
   }
 }

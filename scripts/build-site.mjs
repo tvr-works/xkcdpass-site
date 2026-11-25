@@ -22,14 +22,27 @@ await build();
 const prerender = resolve(root, '.cache/prerender');
 await mkdir(prerender, { recursive: true });
 await build({ build: { ssr: 'src/entry-server.tsx', outDir: prerender, emptyOutDir: true } });
-const { render } = await import(`${prerender}/entry-server.js`);
+const { render, renderPrivacy } = await import(`${prerender}/entry-server.js`);
 const directory = resolve(root, 'dist');
-let html = await readFile(resolve(directory, 'index.html'), 'utf8');
-assert.ok(html.includes('<div id="root"></div>'));
-html = html.replace('<div id="root"></div>', () => `<div id="root">${render()}</div>`);
-await writeFile(resolve(directory, 'index.html'), html);
+const documents = await Promise.all(
+  [
+    ['index.html', render],
+    ['privacy.html', renderPrivacy],
+  ].map(async ([file, renderPage]) => {
+    const path = resolve(directory, file);
+    const template = await readFile(path, 'utf8');
+    assert.ok(template.includes('<div id="root"></div>'), `${file}: missing prerender root`);
+    const html = template.replace(
+      '<div id="root"></div>',
+      () => `<div id="root">${renderPage()}</div>`,
+    );
+    await writeFile(path, html);
+    return html;
+  }),
+);
 await rm(prerender, { recursive: true });
-const hashes = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gu)]
+const hashes = documents
+  .flatMap((html) => [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gu)])
   .filter((match) => !/\bsrc=/.test(match[0]))
   .map((match) => `'sha256-${createHash('sha256').update(match[1]).digest('base64')}'`);
 const csp = `default-src 'self'; script-src 'self' ${hashes.join(' ')}; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'`;

@@ -1,0 +1,43 @@
+/* Keep Tailwind's layer order when Vite lists this stylesheet first. */
+@layer properties, theme, base, components, utilities;
+@import './typeset.css';
+
+@layer components {
+  .typeset-privacy {
+    --color-foreground: var(--foreground);
+    --color-ring: var(--ring);
+    --typeset-font-heading: var(--font-sans);
+    --typeset-font-mono: var(--font-mono);
+    --typeset-size: 1.125rem;
+    --typeset-leading: 1.65;
+    --typeset-flow: 1.1em;
+    margin-block-start: 1.5rem;
+    color: var(--muted-foreground);
+    overflow-wrap: anywhere;
+  }
+
+  @media (width < 48rem) {
+    .typeset-privacy {
+      --typeset-size: 1rem;
+    }
+  }
+
+  .typeset-privacy > p:first-child {
+    margin-block-start: 0;
+  }
+
+  .typeset-privacy section {
+    margin-block-start: 2rem;
+  }
+
+  .typeset-privacy h2 {
+    margin-block-start: 0;
+    text-wrap: balance;
+  }
+
+  .typeset-privacy a {
+    color: var(--accent);
+    text-decoration-color: currentColor;
+    text-underline-offset: 0.25em;
+  }
+}
